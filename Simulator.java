@@ -7,7 +7,6 @@ public class Simulator {
 	private static final String AD_HOC = "1";
 	private static final String PASS = "2";
 	
-	
 	private CarQueue entranceCarQueue;
     private CarQueue entrancePassQueue;
     private CarQueue paymentCarQueue;
@@ -34,7 +33,7 @@ public class Simulator {
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
-        simulatorView = new SimulatorView(3, 6, 30);
+        simulatorView = new SimulatorView(3, 5, 34);
     }
 
     public void run() {

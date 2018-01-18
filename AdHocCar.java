@@ -3,6 +3,7 @@
 import java.util.Random;
 import java.awt.*;
 
+//AdHoc zijn auto's die geen abonnement hebben
 public class AdHocCar extends Car {
 	private static final Color COLOR=Color.red;
 	
