@@ -1,220 +1,268 @@
 package ParkeerSimulator;
 
+
+
 import javax.swing.*;
 import java.awt.*;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
+    private TimeVisualizer timeVisualizer;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
     private int numberOfOpenSpots;
     private Car[][][] cars;
 
-    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
-        this.numberOfFloors = numberOfFloors;
-        this.numberOfRows = numberOfRows;
-        this.numberOfPlaces = numberOfPlaces;
-        this.numberOfOpenSpots =numberOfFloors*numberOfRows*numberOfPlaces;
-        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
-        
-        carParkView = new CarParkView();
+   public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
+       this.numberOfFloors = numberOfFloors;
+       this.numberOfRows = numberOfRows;
+       this.numberOfPlaces = numberOfPlaces;
+       this.numberOfOpenSpots =numberOfFloors*numberOfRows*numberOfPlaces;
+       cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
+       
+       carParkView = new CarParkView();
 
-        Container contentPane = getContentPane();
-        contentPane.add(carParkView, BorderLayout.CENTER);
-        pack();
-        setVisible(true);
+       Container contentPane = getContentPane();
+       contentPane.add(carParkView, BorderLayout.CENTER);
+       contentPane.add(timeVisualizer, BorderLayout.NORTH);
+       pack();
+       setVisible(true);
 
-        updateView();
-    }
+       updateView();
+   }
 
-    public void updateView() {
-        carParkView.updateView();
-    }
-    
+   public void updateView() {
+       carParkView.updateView();
+   }
+   
 	public int getNumberOfFloors() {
-        return numberOfFloors;
-    }
+       return numberOfFloors;
+   }
 
-    public int getNumberOfRows() {
-        return numberOfRows;
-    }
+   public int getNumberOfRows() {
+       return numberOfRows;
+   }
 
-    public int getNumberOfPlaces() {
-        return numberOfPlaces;
-    }
+   public int getNumberOfPlaces() {
+       return numberOfPlaces;
+   }
 
-    public int getNumberOfOpenSpots(){
-    	return numberOfOpenSpots;
-    }
-    
-    public Car getCarAt(Location location) {
-        if (!locationIsValid(location)) {
-            return null;
-        }
-        return cars[location.getFloor()][location.getRow()][location.getPlace()];
-    }
+   public int getNumberOfOpenSpots(){
+   	return numberOfOpenSpots;
+   }
+   
+   public Car getCarAt(Location location) {
+       if (!locationIsValid(location)) {
+           return null;
+       }
+       return cars[location.getFloor()][location.getRow()][location.getPlace()];
+   }
 
-    public boolean setCarAt(Location location, Car car) {
-        if (!locationIsValid(location)) {
-            return false;
-        }
-        Car oldCar = getCarAt(location);
-        if (oldCar == null) {
-            cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
-            car.setLocation(location);
-            numberOfOpenSpots--;
-            return true;
-        }
-        return false;
-    }
+   public boolean setCarAt(Location location, Car car) {
+       if (!locationIsValid(location)) {
+           return false;
+       }
+       Car oldCar = getCarAt(location);
+       if (oldCar == null) {
+           cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
+           car.setLocation(location);
+           numberOfOpenSpots--;
+           return true;
+       }
+       return false;
+   }
 
-    public Car removeCarAt(Location location) {
-        if (!locationIsValid(location)) {
-            return null;
-        }
-        Car car = getCarAt(location);
-        if (car == null) {
-            return null;
-        }
-        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
-        car.setLocation(null);
-        numberOfOpenSpots++;
-        return car;
-    }
+   public Car removeCarAt(Location location) {
+       if (!locationIsValid(location)) {
+           return null;
+       }
+       Car car = getCarAt(location);
+       if (car == null) {
+           return null;
+       }
+       cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
+       car.setLocation(null);
+       numberOfOpenSpots++;
+       return car;
+   }
 
-    public Location getFirstFreeLocation() {
-        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
-            for (int row = 0; row < getNumberOfRows(); row++) {
-                for (int place = 0; place < getNumberOfPlaces(); place++) {
-                    Location location = new Location(floor, row, place);
-                    if (getCarAt(location) == null) {
-                        return location;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+   public Location getFirstFreeLocation() {
+       for (int floor = 1; floor < getNumberOfFloors(); floor++) {
+           for (int row = 0; row < getNumberOfRows(); row++) {
+               for (int place = 0; place < getNumberOfPlaces(); place++) {
+                   Location location = new Location(floor, row, place);
+                   if (getCarAt(location) == null) {
+                       return location;
+                   }
+               }
+           }
+       }
+       return null;
+   }
+   
+   public Location getFirstPaidFreeLocation() {
+       int floor = 0;
+       for (int row = 0; row < getNumberOfRows(); row++) {
+            for (int place = 0; place < getNumberOfPlaces(); place++) {
+                Location location = new Location(floor, row, place);
+                if (getCarAt(location) == null) {
+                       return location;
+               }
+           }
+       }
+       return null;
+   }
 
-    public Car getFirstLeavingCar() {
-        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
-            for (int row = 0; row < getNumberOfRows(); row++) {
-                for (int place = 0; place < getNumberOfPlaces(); place++) {
-                    Location location = new Location(floor, row, place);
-                    Car car = getCarAt(location);
-                    if (car != null && car.getMinutesLeft() <= 0 && !car.getIsPaying()) {
-                        return car;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+   public Car getFirstLeavingCar() {
+       for (int floor = 0; floor < getNumberOfFloors(); floor++) {
+           for (int row = 0; row < getNumberOfRows(); row++) {
+               for (int place = 0; place < getNumberOfPlaces(); place++) {
+                   Location location = new Location(floor, row, place);
+                   Car car = getCarAt(location);
+                   if (car != null && car.getMinutesLeft() <= 0 && !car.getIsPaying()) {
+                       return car;
+                   }
+               }
+           }
+       }
+       return null;
+   }
 
-    public void tick() {
-        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
-            for (int row = 0; row < getNumberOfRows(); row++) {
-                for (int place = 0; place < getNumberOfPlaces(); place++) {
-                    Location location = new Location(floor, row, place);
-                    Car car = getCarAt(location);
-                    if (car != null) {
-                        car.tick();
-                    }
-                }
-            }
-        }
-    }
+   public void tick() {
+       for (int floor = 0; floor < getNumberOfFloors(); floor++) {
+           for (int row = 0; row < getNumberOfRows(); row++) {
+               for (int place = 0; place < getNumberOfPlaces(); place++) {
+                   Location location = new Location(floor, row, place);
+                   Car car = getCarAt(location);
+                   if (car != null) {
+                       car.tick();
+                   }
+               }
+           }
+       }
+   }
 
-    private boolean locationIsValid(Location location) {
-        int floor = location.getFloor();
-        int row = location.getRow();
-        int place = location.getPlace();
-        if (floor < 0 || floor >= numberOfFloors || row < 0 || row > numberOfRows || place < 0 || place > numberOfPlaces) {
-            return false;
-        }
-        return true;
-    }
-    
-    private class CarParkView extends JPanel {
-        
-        private Dimension size;
-        private Image carParkImage;    
-    
-        /**
-         * Constructor for objects of class CarPark
-         */
-        public CarParkView() {
-            size = new Dimension(0, 0);
-        }
-    
-        /**
-         * Overridden. Tell the GUI manager how big we would like to be.
-         */
-        public Dimension getPreferredSize() {
-            return new Dimension(800, 500);
-        }
-    
-        /**
-         * Overriden. The car park view component needs to be redisplayed. Copy the
-         * internal image to screen.
-         */
-        public void paintComponent(Graphics g) {
-            if (carParkImage == null) {
-                return;
-            }
-    
-            Dimension currentSize = getSize();
-            if (size.equals(currentSize)) {
-                g.drawImage(carParkImage, 0, 0, null);
-            }
-            else {
-                // Rescale the previous image.
-                g.drawImage(carParkImage, 0, 0, currentSize.width, currentSize.height, null);
-            }
-        }
-    
-        public void updateView() {
-            // Create a new car park image if the size has changed.
-            if (!size.equals(getSize())) {
-                size = getSize();
-                carParkImage = createImage(size.width, size.height);
-            }
-            Graphics graphics = carParkImage.getGraphics();
-            for(int floor = 0; floor < getNumberOfFloors(); floor++) {
-                for(int row = 0; row < getNumberOfRows(); row++) {
-                	//Maak een temporary int aan voor de plaatsen
-                	int tempNumberOfPlaces;
-                	//Kijk of 'floor' hoger is als 0. Zoja, maak een plaats minder.
-                	//Dit is om te verkomen dat er meer dan 500 plaatsen worden gemaakt.
-                	if(floor > 0) {
-                		tempNumberOfPlaces = getNumberOfPlaces() - 1;
-                	}
-                	else {
-                		tempNumberOfPlaces = getNumberOfPlaces();
-                	}
-                	for(int place = 0; place < tempNumberOfPlaces; place++) {
-                		Location location = new Location(floor, row, place);
-                        Car car = getCarAt(location);
-                        Color color = car == null ? Color.white : car.getColor();
-                        drawPlace(graphics, location, color);
-                	}
-                }
-            }
-            repaint();
-        }
-    
-        /**
-         * Paint a place on this car park view in a given color.
-         */
-        private void drawPlace(Graphics graphics, Location location, Color color) {
-            graphics.setColor(color);
-            graphics.fillRect(
-                    location.getFloor() * 260 + (1 + (int)Math.floor(location.getRow() * 0.5)) * 75 + (location.getRow() % 2) * 20,
-                    60 + location.getPlace() * 10,
-                    20 - 1,
-                    10 - 1); // TODO use dynamic size or constants
-        }
-    }
+   private boolean locationIsValid(Location location) {
+       int floor = location.getFloor();
+       int row = location.getRow();
+       int place = location.getPlace();
+       if (floor < 0 || floor >= numberOfFloors || row < 0 || row > numberOfRows || place < 0 || place > numberOfPlaces) {
+           return false;
+       }
+       return true;
+   }
+   
+   private class CarParkView extends JPanel {
+       
+       private Dimension size;
+       private Image carParkImage;    
+   
+       /**
+        * Constructor for objects of class CarPark
+        */
+       public CarParkView() {
+           size = new Dimension(0, 0);
+       }
+   
+       /**
+        * Overridden. Tell the GUI manager how big we would like to be.
+        */
+       public Dimension getPreferredSize() {
+           return new Dimension(800, 500);
+       }
+   
+       /**
+        * Overriden. The car park view component needs to be redisplayed. Copy the
+        * internal image to screen.
+        */
+       public void paintComponent(Graphics g) {
+           if (carParkImage == null) {
+               return;
+           }
+   
+           Dimension currentSize = getSize();
+           if (size.equals(currentSize)) {
+               g.drawImage(carParkImage, 0, 0, null);
+           }
+           else {
+               // Rescale the previous image.
+               g.drawImage(carParkImage, 0, 0, currentSize.width, currentSize.height, null);
+           }
+       }
+   
+       public void updateView() {
+           // Create a new car park image if the size has changed.
+           if (!size.equals(getSize())) {
+               size = getSize();
+               carParkImage = createImage(size.width, size.height);
+           }
+           Graphics graphics = carParkImage.getGraphics();
+           for(int floor = 0; floor < getNumberOfFloors(); floor++) {
+               for(int row = 0; row < getNumberOfRows(); row++) {
+               	//Maak een temporary int aan voor de plaatsen
+               	int tempNumberOfPlaces;
+               	//Kijk of 'floor' hoger is als 0. Zoja, maak een plaats minder.
+               	//Dit is om te verkomen dat er meer dan 500 plaatsen worden gemaakt.
+               	if(floor > 0) {
+               		tempNumberOfPlaces = getNumberOfPlaces() - 1;
+               	}
+               	else {
+               		tempNumberOfPlaces = getNumberOfPlaces();
+               	}
+               	for(int place = 0; place < tempNumberOfPlaces; place++) {
+               		Color color = null;
+               		Location location = new Location(floor, row, place);
+                       Car car = getCarAt(location);
+                       if(car == null) {
+                       		switch (location.getType()) {
+                               case 0:  color = new Color(196, 213, 239);
+                                        break;
+                               case 1:  color = Color.white;
+                                        break;
+                               case 2:  color = Color.green;
+                                        break;
+                       		}
+                       }
+                       else {
+                       	color = car.getColor();
+                       }
+                       
+                       drawPlace(graphics, location, color);
+               	}
+               }
+           }
+           repaint();
+       }
+   
+       /**
+        * Paint a place on this car park view in a given color.
+        */
+       private void drawPlace(Graphics graphics, Location location, Color color) {
+           graphics.setColor(color);
+           graphics.fillRect(
+                   location.getFloor() * 260 + (1 + (int)Math.floor(location.getRow() * 0.5)) * 75 + (location.getRow() % 2) * 20,
+                   60 + location.getPlace() * 10,
+                   20 - 1,
+                   10 - 1); // TODO use dynamic size or constants
+       }
+   }
+   
+   private class TimeVisualizer extends JPanel { //IN CONSTRUCTION
+	   private int minute = 5;
+	   private int hour;
+	   private int day;
+	   private Graphics graphics;
+	   
+	   public TimeVisualizer() {
+		   graphics.drawString("Minutes: " + minute, 0,0);
+	   }
+	   
+       private void UpdateTime() {
+    	   minute = simulator.getMinute();
+    	   hour = simulator.getHour();
+    	   day = simulator.getDay();
+       }
+   }
 
 }

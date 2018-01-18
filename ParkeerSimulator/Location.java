@@ -1,11 +1,14 @@
 package ParkeerSimulator;
  
+import java.awt.Color;
 
 public class Location {
 
     private int floor;
     private int row;
     private int place;
+    private int type; // 0 = abonnee plek, 1 = reguliere plek, 2 = gereserveerd
+
 
     /**
      * Constructor for objects of class Location
@@ -14,6 +17,14 @@ public class Location {
         this.floor = floor;
         this.row = row;
         this.place = place;
+        
+        if (floor == 0) {
+        	type = 0;
+        }
+        else
+        {
+        	type = 1;
+        }
     }
 
     /**
@@ -66,6 +77,13 @@ public class Location {
      */
     public int getPlace() {
         return place;
+    }
+    
+    /**
+     * @return The type.
+     */
+    public int getType() {
+        return type;
     }
 
 }

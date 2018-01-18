@@ -145,7 +145,14 @@ public class Simulator {
     			simulatorView.getNumberOfOpenSpots()>0 && 
     			i<enterSpeed) {
             Car car = queue.removeCar();
-            Location freeLocation = simulatorView.getFirstFreeLocation();
+            Location freeLocation;
+            if(car instanceof AdHocCar) {
+            	freeLocation = simulatorView.getFirstFreeLocation();
+            }
+            else
+            {
+            	freeLocation = simulatorView.getFirstPaidFreeLocation();
+            }
             simulatorView.setCarAt(freeLocation, car);
             i++;
         }
@@ -219,5 +226,17 @@ public class Simulator {
     private void carLeavesSpot(Car car){
     	simulatorView.removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
+    }
+    
+    public int getMinute() {
+    	return minute;
+    }
+    
+    public int getHour() {
+    	return hour;
+    }
+    
+    public int getDay() {
+    	return day;
     }
 }
