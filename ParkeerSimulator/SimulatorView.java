@@ -1,5 +1,4 @@
 package ParkeerSimulator;
- 
 
 import javax.swing.*;
 import java.awt.*;
@@ -184,23 +183,21 @@ public class SimulatorView extends JFrame {
             Graphics graphics = carParkImage.getGraphics();
             for(int floor = 0; floor < getNumberOfFloors(); floor++) {
                 for(int row = 0; row < getNumberOfRows(); row++) {
+                	//Maak een temporary int aan voor de plaatsen
+                	int tempNumberOfPlaces;
                 	//Kijk of 'floor' hoger is als 0. Zoja, maak een plaats minder.
                 	//Dit is om te verkomen dat er meer dan 500 plaatsen worden gemaakt.
                 	if(floor > 0) {
-                		for(int place = 0; place < (getNumberOfPlaces() - 1); place++) {
-                            Location location = new Location(floor, row, place);
-                            Car car = getCarAt(location);
-                            Color color = car == null ? Color.white : car.getColor();
-                            drawPlace(graphics, location, color);
-                        }
+                		tempNumberOfPlaces = getNumberOfPlaces() - 1;
                 	}
                 	else {
-                		for(int place = 0; place < getNumberOfPlaces(); place++) {
-                            Location location = new Location(floor, row, place);
-                            Car car = getCarAt(location);
-                            Color color = car == null ? Color.white : car.getColor();
-                            drawPlace(graphics, location, color);
-                        }
+                		tempNumberOfPlaces = getNumberOfPlaces();
+                	}
+                	for(int place = 0; place < tempNumberOfPlaces; place++) {
+                		Location location = new Location(floor, row, place);
+                        Car car = getCarAt(location);
+                        Color color = car == null ? Color.white : car.getColor();
+                        drawPlace(graphics, location, color);
                 	}
                 }
             }
