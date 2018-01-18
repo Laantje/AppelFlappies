@@ -1,5 +1,4 @@
 package ParkeerSimulator;
- 
 
 import java.util.Random;
 
@@ -14,15 +13,15 @@ public class Simulator {
     private CarQueue exitCarQueue;
     private SimulatorView simulatorView;
 
-    private int day = 0;
+    private int day = 0; //Maandag = 0; Dinsdag = 1; Woensdag = 2; enzovoort...
     private int hour = 0;
     private int minute = 0;
 
     private int tickPause = 100;
 
-    int weekDayArrivals= 100; // average number of arriving cars per hour
+    int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
-    int weekDayPassArrivals= 50; // average number of arriving cars per hour
+    int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = weekDayPassArrivals / 10; // average number of arriving cars per hour
 
     int enterSpeed = 3; // number of cars that can enter per minute
@@ -92,9 +91,50 @@ public class Simulator {
     }
     
     private void carsArriving(){
-    	int numberOfCars=getNumberOfCars(weekDayArrivals, weekendArrivals);
+    	//Maak tijdelijke variabelen aan zodat die aangepast kunnen 
+    	//worden in de spitsuur voor efficientie
+    	int tempWeekDayArrivals = weekDayArrivals;
+    	int tempWeekDayPassArrivals = weekDayPassArrivals;
+    	int tempWeekendArrivals = weekendArrivals;
+    	int tempWeekendPassArrivals = weekendPassArrivals;
+    	
+    	//Kijk naar de tijd en dag om spitsuren te bepalen
+    	if(day < 5) 
+    	{
+    		if(hour > 7 && hour < 9) //Spitsuren inrijden ochtend
+    		{
+    			tempWeekDayArrivals += weekDayArrivals; //Verhogen met 100%
+    			tempWeekDayPassArrivals += (weekDayPassArrivals / 100) * 150; //Verhogen met 150%
+    		}
+    		if(day == 3 && hour > 17 && hour < 19) //Donderdag koopavond
+    		{
+    			tempWeekDayArrivals += (weekDayArrivals / 100) * 150; //Verhogen met 150%
+    			tempWeekDayPassArrivals -= (weekDayPassArrivals / 100) * 50; //Verlagen met 50%
+    		}
+    		else if(day == 4 && hour > 19 && hour < 22) //Vrijdagavond Theater
+    		{
+    			tempWeekDayArrivals += (weekDayArrivals / 100) * 150; //Verhogen met 150%
+    			tempWeekDayPassArrivals -= (weekDayPassArrivals / 100) * 50; //Verlagen met 50%
+    		}
+    	}
+    	else 
+    	{
+    		if(day == 5 && hour > 19 && hour < 22) //Zaterdag avond theater
+    		{
+    			tempWeekendArrivals += (weekendArrivals / 100) * 150; //Verhogen met 150%
+    			tempWeekendPassArrivals -= (weekendPassArrivals / 100) * 50; //Verlagen met 50%
+    		}
+    		else if(day == 6 && hour > 12 && hour < 14) //Zondag middag theater
+    		{
+    			tempWeekendArrivals += (weekendArrivals / 100) * 150; //Verhogen met 150%
+    			tempWeekendPassArrivals -= (weekendPassArrivals / 100) * 50; //Verlagen met 50%
+    		}
+    	}
+    	
+    	//Reken uit hoeveel auto's er moeten komen 
+    	int numberOfCars=getNumberOfCars(tempWeekDayArrivals, tempWeekendArrivals);
         addArrivingCars(numberOfCars, AD_HOC);    	
-    	numberOfCars=getNumberOfCars(weekDayPassArrivals, weekendPassArrivals);
+    	numberOfCars=getNumberOfCars(tempWeekDayPassArrivals, tempWeekendPassArrivals);
         addArrivingCars(numberOfCars, PASS);    	
     }
 
