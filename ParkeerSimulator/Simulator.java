@@ -93,10 +93,32 @@ public class Simulator {
     private void carsArriving(){
     	//Maak tijdelijke variabelen aan zodat die aangepast kunnen 
     	//worden in de spitsuur voor efficientie
-    	int tempWeekDayArrivals = weekDayArrivals;
-    	int tempWeekDayPassArrivals = weekDayPassArrivals;
-    	int tempWeekendArrivals = weekendArrivals;
-    	int tempWeekendPassArrivals = weekendPassArrivals;
+    	int tempWeekDayArrivals;
+    	int tempWeekDayPassArrivals;
+    	int tempWeekendArrivals;
+    	int tempWeekendPassArrivals;
+    	
+    	//'s Nachts komen er minder mensen
+    	if(hour >= 0 && hour < 6) {
+    		tempWeekDayArrivals = weekDayArrivals / 5;
+    		tempWeekDayPassArrivals = weekDayPassArrivals / 3;
+    		tempWeekendArrivals = weekendArrivals / 5;
+    		tempWeekendPassArrivals = weekendPassArrivals / 3;
+    	}
+    	//Tussen 6 & 7 en 22 & 24 komen er iets meer mensen
+    	else if(hour == 6 || day < 4 && hour >= 21 && hour < 24 || hour >= 22 && hour < 24) {
+    		tempWeekDayArrivals = weekDayArrivals / 4;
+    		tempWeekDayPassArrivals = weekDayPassArrivals / 3;
+    		tempWeekendArrivals = weekendArrivals / 4;
+    		tempWeekendPassArrivals = weekendPassArrivals / 3;
+    	}
+    	//Overdag komt de normale aantal
+    	else {
+    		tempWeekDayArrivals = weekDayArrivals;
+        	tempWeekDayPassArrivals = weekDayPassArrivals;
+        	tempWeekendArrivals = weekendArrivals;
+        	tempWeekendPassArrivals = weekendPassArrivals;
+    	}
     	
     	//Kijk naar de tijd en dag om spitsuren te bepalen
     	if(day < 5) 
