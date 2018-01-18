@@ -1,9 +1,0 @@
-#BlueJ class context
-comment0.target=CarQueue
-comment1.params=car
-comment1.target=boolean\ addCar(Parkeersimulator.Car)
-comment2.params=
-comment2.target=Parkeersimulator.Car\ removeCar()
-comment3.params=
-comment3.target=int\ carsInQueue()
-numComments=4
