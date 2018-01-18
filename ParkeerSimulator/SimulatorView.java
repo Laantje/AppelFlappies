@@ -73,7 +73,7 @@ public class SimulatorView extends JFrame {
        if (oldCar == null) {
            cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
            car.setLocation(location);
-           if (car instanceof AdHocCar) {
+           if (car instanceof AdHocCar || car instanceof ReserveCar) {
         	   numberOfOpenSpots--;
            }
            else if(car instanceof ParkingPassCar)
@@ -95,7 +95,7 @@ public class SimulatorView extends JFrame {
        }
        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
        car.setLocation(null);
-       if (car instanceof AdHocCar) {
+       if (car instanceof AdHocCar || car instanceof ReserveCar) {
     	   numberOfOpenSpots++;
        }
        else if(car instanceof ParkingPassCar)

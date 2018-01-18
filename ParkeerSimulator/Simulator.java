@@ -6,6 +6,7 @@ public class Simulator {
 
 	private static final String AD_HOC = "1";
 	private static final String PASS = "2";
+	private static final String RESERVE = "3";
 	
 	private CarQueue entranceCarQueue;
     private CarQueue entrancePassQueue;
@@ -23,6 +24,8 @@ public class Simulator {
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = weekDayPassArrivals / 10; // average number of arriving cars per hour
+    int weekDayReserves = 20; // average number of reserves per hour
+    int weekendReserves = 200; // average number of reserves per hour
 
     int enterSpeed = 3; // number of cars that can enter per minute
     int paymentSpeed = 7; // number of cars that can pay per minute
@@ -135,7 +138,9 @@ public class Simulator {
     	int numberOfCars=getNumberOfCars(tempWeekDayArrivals, tempWeekendArrivals);
         addArrivingCars(numberOfCars, AD_HOC);    	
     	numberOfCars=getNumberOfCars(tempWeekDayPassArrivals, tempWeekendPassArrivals);
-        addArrivingCars(numberOfCars, PASS);    	
+        addArrivingCars(numberOfCars, PASS);
+        numberOfCars=getNumberOfCars(weekDayReserves, weekendReserves);
+        addArrivingCars(numberOfCars, RESERVE);   
     }
 
     private void carsEntering(CarQueue queue){
@@ -146,7 +151,7 @@ public class Simulator {
     			i<enterSpeed) {
             Car car = queue.removeCar();
             Location freeLocation;
-            if(car instanceof AdHocCar) {
+            if(car instanceof AdHocCar || car instanceof ReserveCar) {
             	freeLocation = simulatorView.getFirstFreeLocation();
             }
             else
@@ -233,7 +238,12 @@ public class Simulator {
             for (int i = 0; i < numberOfCars; i++) {
             	entrancePassQueue.addCar(new ParkingPassCar());
             }
-            break;	            
+            break;
+    	case RESERVE:
+            for (int i = 0; i < numberOfCars; i++) {
+            	entranceCarQueue.addCar(new ReserveCar());
+            }
+            break;
     	}
     }
     
