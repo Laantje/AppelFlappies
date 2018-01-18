@@ -236,7 +236,7 @@ public class SimulatorView extends JFrame {
                        		switch (location.getType()) {
                                case 0:  color = new Color(196, 213, 239);
                                         break;
-                               case 1:  color = Color.white;
+                               case 1:  color = new Color(255, 216, 214);
                                         break;
                                case 2:  color = Color.green;
                                         break;
