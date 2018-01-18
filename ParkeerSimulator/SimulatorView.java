@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
-    private TimeVisualizer timeVisualizer;
+    //private TimeVisualizer timeVisualizer;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
@@ -25,7 +25,7 @@ public class SimulatorView extends JFrame {
 
        Container contentPane = getContentPane();
        contentPane.add(carParkView, BorderLayout.CENTER);
-       contentPane.add(timeVisualizer, BorderLayout.NORTH);
+       //contentPane.add(timeVisualizer, BorderLayout.NORTH);
        pack();
        setVisible(true);
 
@@ -259,9 +259,7 @@ public class SimulatorView extends JFrame {
 	   }
 	   
        private void UpdateTime() {
-    	   minute = simulator.getMinute();
-    	   hour = simulator.getHour();
-    	   day = simulator.getDay();
+    	  //to be continued
        }
    }
 
