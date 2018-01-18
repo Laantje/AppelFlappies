@@ -18,7 +18,7 @@ public class Simulator {
     private int minute = 0;
 
     private int tickPause = 100;
-
+    
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
@@ -234,12 +234,24 @@ public class Simulator {
     	switch(type) {
     	case AD_HOC: 
             for (int i = 0; i < numberOfCars; i++) {
-            	entranceCarQueue.addCar(new AdHocCar());
+            	//Kijk hoelaat het is
+            	if(hour < 20 && hour > 6) {
+            		entranceCarQueue.addCar(new AdHocCar(false));
+            	}
+            	else {
+            		entranceCarQueue.addCar(new AdHocCar(true));
+            	}
             }
             break;
     	case PASS:
             for (int i = 0; i < numberOfCars; i++) {
-            	entrancePassQueue.addCar(new ParkingPassCar());
+            	//Kijk hoelaat het is
+            	if(hour < 20 && hour > 6) {
+            		entrancePassQueue.addCar(new ParkingPassCar(false));
+            	}
+            	else {
+            		entranceCarQueue.addCar(new AdHocCar(true));
+            	}
             }
             break;	            
     	}
