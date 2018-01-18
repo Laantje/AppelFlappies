@@ -1,13 +1,10 @@
 package ParkeerSimulator;
 
-
-
 import javax.swing.*;
 import java.awt.*;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
-    //private TimeVisualizer timeVisualizer;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
@@ -18,14 +15,13 @@ public class SimulatorView extends JFrame {
        this.numberOfFloors = numberOfFloors;
        this.numberOfRows = numberOfRows;
        this.numberOfPlaces = numberOfPlaces;
-       this.numberOfOpenSpots =numberOfFloors*numberOfRows*numberOfPlaces;
+       this.numberOfOpenSpots = numberOfFloors*numberOfRows*numberOfPlaces;
        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
        
        carParkView = new CarParkView();
 
        Container contentPane = getContentPane();
        contentPane.add(carParkView, BorderLayout.CENTER);
-       //contentPane.add(timeVisualizer, BorderLayout.NORTH);
        pack();
        setVisible(true);
 
@@ -50,6 +46,10 @@ public class SimulatorView extends JFrame {
 
    public int getNumberOfOpenSpots(){
    	return numberOfOpenSpots;
+   }
+   
+   public void giveTime(int m, int h, int d) {
+	   carParkView.updateTime(m,h,d); //Verstuur de tijd naar carParkView
    }
    
    public Car getCarAt(Location location) {
@@ -156,13 +156,30 @@ public class SimulatorView extends JFrame {
    private class CarParkView extends JPanel {
        
        private Dimension size;
-       private Image carParkImage;    
+       private Image carParkImage;
+       private JLabel clockDay;
+       private JLabel clockTime;
+       private int minute;
+       private int hour;
+       private int day;
    
        /**
         * Constructor for objects of class CarPark
         */
        public CarParkView() {
-           size = new Dimension(0, 0);
+           size = new Dimension(0, 0); 
+           
+           //Maak JLabel voor tijd en dag aan
+           clockDay = new JLabel("Maandag");
+           clockTime = new JLabel(String.valueOf(hour) + ":" + String.valueOf(minute));
+           
+           //Maak de font groter
+           clockDay.setFont(new Font("", Font.PLAIN, 30));
+           clockTime.setFont(new Font("", Font.PLAIN, 30));
+           
+           //Voeg JLabel toe
+           this.add(clockDay);
+           this.add(clockTime);
        }
    
        /**
@@ -190,6 +207,56 @@ public class SimulatorView extends JFrame {
                g.drawImage(carParkImage, 0, 0, currentSize.width, currentSize.height, null);
            }
        }
+       
+       public void updateTime(int m, int h, int d) {
+    	   //Zet de tijd variabelen
+    	   minute = m;
+    	   hour = h;
+    	   day = d;
+    	   
+    	   //Check welke dag het is
+    	   switch(day) {
+    	   		case 0:
+    	   			clockDay.setText("Maandag");
+    	   			break;
+    	   		case 1:
+    	   			clockDay.setText("Dinsdag");
+    	   			break;
+    	   		case 2:
+    	   			clockDay.setText("Woensdag");
+    	   			break;
+    	   		case 3:
+    	   			clockDay.setText("Donderdag");
+    	   			break;
+    	   		case 4:
+    	   			clockDay.setText("Vrijdag");
+    	   			break;
+    	   		case 5:
+    	   			clockDay.setText("Zaterdag");
+    	   			break;
+    	   		case 6:
+    	   			clockDay.setText("Zondag");
+    	   			break;
+    	   }
+    	   
+    	   //Zet de clock goed
+    	   if(hour < 10) {
+    		   if(minute < 10) {
+    			   clockTime.setText("0" + String.valueOf(hour) + ":0" + String.valueOf(minute));
+    		   }
+    		   else {
+    			   clockTime.setText("0" + String.valueOf(hour) + ":" + String.valueOf(minute));
+    		   }
+    	   }
+    	   else {
+    		   if(minute < 10) {
+    			   clockTime.setText(String.valueOf(hour) + ":0" + String.valueOf(minute));
+    		   }
+    		   else {
+    			   clockTime.setText(String.valueOf(hour) + ":" + String.valueOf(minute));
+    		   }
+    	   }
+       }
    
        public void updateView() {
            // Create a new car park image if the size has changed.
@@ -213,25 +280,24 @@ public class SimulatorView extends JFrame {
                	for(int place = 0; place < tempNumberOfPlaces; place++) {
                		Color color = null;
                		Location location = new Location(floor, row, place);
-                       Car car = getCarAt(location);
-                       if(car == null) {
-                       		switch (location.getType()) {
-                               case 0:  color = new Color(196, 213, 239);
-                                        break;
-                               case 1:  color = Color.white;
-                                        break;
-                               case 2:  color = Color.green;
-                                        break;
-                       		}
-                       }
-                       else {
-                       	color = car.getColor();
-                       }
-                       
-                       drawPlace(graphics, location, color);
+                    Car car = getCarAt(location);
+                    if(car == null) {
+                    	switch (location.getType()) {
+                        	case 0:  color = new Color(196, 213, 239);
+                               break;
+                            case 1:  color = Color.white;
+                               break;
+                            case 2:  color = Color.green;
+                               break;
+                       	}
+                    }
+                   	else {
+                    	color = car.getColor();
+                    }
+                    drawPlace(graphics, location, color);
                	}
-               }
            }
+        }
            repaint();
        }
    
@@ -247,20 +313,4 @@ public class SimulatorView extends JFrame {
                    10 - 1); // TODO use dynamic size or constants
        }
    }
-   
-   private class TimeVisualizer extends JPanel { //IN CONSTRUCTION
-	   private int minute = 5;
-	   private int hour;
-	   private int day;
-	   private Graphics graphics;
-	   
-	   public TimeVisualizer() {
-		   graphics.drawString("Minutes: " + minute, 0,0);
-	   }
-	   
-       private void UpdateTime() {
-    	  //to be continued
-       }
-   }
-
 }

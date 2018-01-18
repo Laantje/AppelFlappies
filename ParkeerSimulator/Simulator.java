@@ -69,7 +69,7 @@ public class Simulator {
         while (day > 6) {
             day -= 7;
         }
-
+        simulatorView.giveTime(minute, hour, day); //Verstuur de tijd naar carParkView
     }
 
     private void handleEntrance(){
