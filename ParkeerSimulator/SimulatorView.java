@@ -11,6 +11,7 @@ public class SimulatorView extends JFrame {
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
+    private int numberOfPaidOpenSpots;
     private int numberOfOpenSpots;
     private Car[][][] cars;
 
@@ -18,7 +19,8 @@ public class SimulatorView extends JFrame {
        this.numberOfFloors = numberOfFloors;
        this.numberOfRows = numberOfRows;
        this.numberOfPlaces = numberOfPlaces;
-       this.numberOfOpenSpots =numberOfFloors*numberOfRows*numberOfPlaces;
+       this.numberOfOpenSpots =(numberOfFloors-1)*numberOfRows*numberOfPlaces;
+       this.numberOfPaidOpenSpots =1*numberOfRows*numberOfPlaces;
        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
        
        carParkView = new CarParkView();
@@ -49,7 +51,11 @@ public class SimulatorView extends JFrame {
    }
 
    public int getNumberOfOpenSpots(){
-   	return numberOfOpenSpots;
+   		return numberOfOpenSpots;
+   }
+   
+   public int getNumberOfPaidOpenSpots(){
+	   	return numberOfPaidOpenSpots;
    }
    
    public Car getCarAt(Location location) {
@@ -67,7 +73,13 @@ public class SimulatorView extends JFrame {
        if (oldCar == null) {
            cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
            car.setLocation(location);
-           numberOfOpenSpots--;
+           if (car instanceof AdHocCar) {
+        	   numberOfOpenSpots--;
+           }
+           else if(car instanceof ParkingPassCar)
+           {
+        	   numberOfPaidOpenSpots--;
+           }       
            return true;
        }
        return false;
@@ -83,7 +95,13 @@ public class SimulatorView extends JFrame {
        }
        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
        car.setLocation(null);
-       numberOfOpenSpots++;
+       if (car instanceof AdHocCar) {
+    	   numberOfOpenSpots++;
+       }
+       else if(car instanceof ParkingPassCar)
+       {
+    	   numberOfPaidOpenSpots++;
+       }      
        return car;
    }
 

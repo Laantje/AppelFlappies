@@ -19,12 +19,12 @@ public class Simulator {
 
     private int tickPause = 100;
 
-    int weekDayArrivals = 100; // average number of arriving cars per hour
+    int weekDayArrivals = 20000; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
-    int weekDayPassArrivals = 50; // average number of arriving cars per hour
+    int weekDayPassArrivals = 5000; // average number of arriving cars per hour
     int weekendPassArrivals = weekDayPassArrivals / 10; // average number of arriving cars per hour
 
-    int enterSpeed = 3; // number of cars that can enter per minute
+    int enterSpeed = 30; // number of cars that can enter per minute
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
 
@@ -74,7 +74,7 @@ public class Simulator {
 
     private void handleEntrance(){
     	carsArriving();
-    	carsEntering(entrancePassQueue);
+    	paidCarsEntering(entrancePassQueue);
     	carsEntering(entranceCarQueue);  	
     }
     
@@ -142,7 +142,7 @@ public class Simulator {
         int i=0;
         // Remove car from the front of the queue and assign to a parking space.
     	while (queue.carsInQueue()>0 && 
-    			simulatorView.getNumberOfOpenSpots()>0 && 
+    			simulatorView.getNumberOfOpenSpots()>0 &&
     			i<enterSpeed) {
             Car car = queue.removeCar();
             Location freeLocation;
@@ -153,6 +153,20 @@ public class Simulator {
             {
             	freeLocation = simulatorView.getFirstPaidFreeLocation();
             }
+            simulatorView.setCarAt(freeLocation, car);
+            i++;
+        }
+    }
+    
+    private void paidCarsEntering(CarQueue queue){
+        int i=0;
+        // Remove car from the front of the queue and assign to a parking space.
+    	while (queue.carsInQueue()>0 && 
+    			simulatorView.getNumberOfPaidOpenSpots()>0 &&
+    			i<enterSpeed) {
+            Car car = queue.removeCar();
+            Location freeLocation;
+            freeLocation = simulatorView.getFirstPaidFreeLocation();
             simulatorView.setCarAt(freeLocation, car);
             i++;
         }
