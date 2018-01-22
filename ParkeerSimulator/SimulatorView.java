@@ -2,6 +2,8 @@ package ParkeerSimulator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
@@ -48,8 +50,14 @@ public class SimulatorView extends JFrame {
    	return numberOfOpenSpots;
    }
    
+   //Geef tijd door aan carParkView
    public void giveTime(int m, int h, int d) {
 	   carParkView.updateTime(m,h,d); //Verstuur de tijd naar carParkView
+   }
+   
+   //Geef stats door aan statswindow
+   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
+	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
    }
    
    public Car getCarAt(Location location) {
@@ -154,11 +162,13 @@ public class SimulatorView extends JFrame {
    }
    
    private class CarParkView extends JPanel {
-       
+       private StatsWindow statsWindow;
        private Dimension size;
        private Image carParkImage;
        private JLabel clockDay;
        private JLabel clockTime;
+       private JButton statsButton;
+       private boolean statsWindowActive;
        private int minute;
        private int hour;
        private int day;
@@ -167,7 +177,12 @@ public class SimulatorView extends JFrame {
         * Constructor for objects of class CarPark
         */
        public CarParkView() {
+    	   //Create Dimension
            size = new Dimension(0, 0); 
+           
+           //Maak een nieuwe stats windows aan
+           statsWindow = new StatsWindow();
+           statsWindowActive = false;
            
            //Maak JLabel voor tijd en dag aan
            clockDay = new JLabel("Maandag");
@@ -177,9 +192,24 @@ public class SimulatorView extends JFrame {
            clockDay.setFont(new Font("", Font.PLAIN, 30));
            clockTime.setFont(new Font("", Font.PLAIN, 30));
            
+           //Voeg de stats button toe
+           statsButton = new JButton("Statistieken");
+           
+           //Geef de stats button een event
+           statsButton.addActionListener( new ActionListener()
+           {
+               public void actionPerformed(ActionEvent e)
+               {
+                   activateStatsWindow();
+               }
+           });
+           
            //Voeg JLabel toe
            this.add(clockDay);
            this.add(clockTime);
+           
+           //Voeg JButton toe
+           this.add(statsButton);
        }
    
        /**
@@ -187,6 +217,19 @@ public class SimulatorView extends JFrame {
         */
        public Dimension getPreferredSize() {
            return new Dimension(800, 500);
+       }
+       
+       //Maak een nieuwe windows aan met stats
+       private void activateStatsWindow() {
+    	   //Kijk of stats window al open is
+    	   if(statsWindowActive) {
+    		   statsWindow.setVisible(false);
+    		   statsWindowActive = false;
+    	   }
+    	   else {
+    		   statsWindow.setVisible(true);
+    		   statsWindowActive = true;
+    	   }
        }
    
        /**

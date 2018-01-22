@@ -16,6 +16,11 @@ public class Simulator {
     private int day = 0; //Maandag = 0; Dinsdag = 1; Woensdag = 2; enzovoort...
     private int hour = 0;
     private int minute = 0;
+    
+    private int totalParkedCars = 0;
+    private int parkedCars = 0;
+    private int parkedPassCars = 0;
+    private int parkedReservedCars = 0;
 
     private int tickPause = 100;
     
@@ -53,6 +58,10 @@ public class Simulator {
             e.printStackTrace();
         }
     	handleEntrance();
+    	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
+    	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
+    	//Geef stats door aan SimulatorView
+    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars);
     }
 
     private void advanceTime(){
@@ -170,10 +179,12 @@ public class Simulator {
             Location freeLocation;
             if(car instanceof AdHocCar) {
             	freeLocation = simulatorView.getFirstFreeLocation();
+            	parkedCars++;
             }
             else
             {
             	freeLocation = simulatorView.getFirstPaidFreeLocation();
+            	parkedPassCars++;
             }
             simulatorView.setCarAt(freeLocation, car);
             i++;
@@ -260,6 +271,14 @@ public class Simulator {
     private void carLeavesSpot(Car car){
     	simulatorView.removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
+        //Kijk wat voor klant het is; pas de stats aan
+        if(car instanceof AdHocCar) {
+        	parkedCars--;
+        }
+        else
+        {
+        	parkedPassCars--;
+        }
     }
     
     public int getMinute() {
