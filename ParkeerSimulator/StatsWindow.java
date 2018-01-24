@@ -5,6 +5,7 @@ import javax.swing.*;
 import javafx.scene.layout.Pane;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,7 +16,7 @@ public class StatsWindow extends JFrame {
 	
 	public StatsWindow() {
 		//Create Dimension
-		this.setPreferredSize(new Dimension(400, 200));
+		this.setPreferredSize(new Dimension(500, 250));
 		
 		//Maak JPanels aan
 		statsTextView = new StatsTextView();
@@ -79,35 +80,69 @@ public class StatsWindow extends JFrame {
 	
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
+		private JPanel cards;
 		private JLabel checkBoxText;
+		private JLabel circleText;
+		private JLabel lineText;
+		private JLabel barText;
 		private final static String circlePanelT = "Cirkel Diagram";
 		private final static String linePanelT = "Lijn Diagram";
 		private final static String barPanelT = "Staaf Diagram";
 		
 		public StatsGraphView() {
-			//Zet de layout van deze JPanel
-			this.setLayout(new CardLayout());
+			//Init borderlayout
+			this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+			
+			//Initializeer JPanel
+			cards = new JPanel(new CardLayout());
 			
 			//Maak nieuwe combobox aan
 			String comboBoxItems[] = { circlePanelT, linePanelT, barPanelT };
 	        JComboBox comboBox = new JComboBox(comboBoxItems);
 	        comboBox.setEditable(false);
-	        //comboBox.addItemListener(this);
+	        comboBox.addItemListener(new cardEvents());
 	        
 			//Maak Jlabel aan
 	        checkBoxText = new JLabel("Kies soort diagram:");
+	        circleText = new JLabel("Hier komt een cirkel diagram");
+	        lineText = new JLabel("Hier komt een lijn diagram");
+	        barText = new JLabel("Hier komt een staaf diagram");
 	        
 	        //Maak keuze jpanels aan
 	        JPanel circlePanel = new JPanel();
 			JPanel linePanel = new JPanel();
 			JPanel barPanel = new JPanel();
+			
+			//Voeg objecten toe aan de cards
+			circlePanel.add(circleText);
+			linePanel.add(lineText);
+			barPanel.add(barText);
+			
+			//Voeg de cards toe aan cards
+			cards.add(circlePanel, circlePanelT);
+	        cards.add(linePanel, linePanelT);
+	        cards.add(barPanel, barPanelT);
 	        
-	        //Voeg de objects toe aan het scherm
+	        //Zet alles in het midden
+	        checkBoxText.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        cards.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        
+	        //Combobox width aanpassen
+	        comboBox.setMaximumSize(new Dimension(200, comboBox.getPreferredSize().height));
+	        
+	        //Voeg de objects toe aan deze JPanel
 			this.add(checkBoxText);
 			this.add(comboBox);
-			this.add(circlePanel, circlePanelT);
-	        this.add(linePanel, linePanelT);
-	        this.add(barPanel, barPanelT);
+			this.add(cards);
+		}
+		
+		//Maak class vor event aan
+		private class cardEvents implements ItemListener  {
+			public void itemStateChanged(ItemEvent evt) {
+		        CardLayout cl = (CardLayout)(cards.getLayout());
+		        cl.show(cards, (String)evt.getItem());
+		    }
 		}
 	}
 }
