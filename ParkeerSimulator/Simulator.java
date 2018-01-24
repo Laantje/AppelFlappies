@@ -12,7 +12,6 @@ public class Simulator {
 	private CarQueue entranceCarQueue;
     private CarQueue entrancePassQueue;
     private CarQueue reservationQueue;
-    private CarQueue reservationCarQueue;
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
     private SimulatorView simulatorView;
@@ -42,7 +41,6 @@ public class Simulator {
         entrancePassQueue = new CarQueue();
         reservationQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
-        reservationCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 5, 34);
     }
@@ -85,10 +83,9 @@ public class Simulator {
 
     private void handleEntrance(){
     	carsArriving();
-    	paidCarsEntering(entrancePassQueue);
+    	carsEntering(entrancePassQueue);
     	carsEntering(entranceCarQueue);
-    	reserveCarsEntering(reservationCarQueue);
-    	reservationsMaking(reservationQueue);
+    	carsEntering(reservationQueue);
     }
     
     private void handleExit(){
@@ -158,63 +155,55 @@ public class Simulator {
     private void carsEntering(CarQueue queue){
         int i=0;
         // Remove car from the front of the queue and assign to a parking space.
-    	while (queue.carsInQueue()>0 && 
-    			simulatorView.getNumberOfOpenSpots()>0 &&
-    			i<enterSpeed) {
-            Car car = queue.removeCar();
-            Location freeLocation;
-            if(car instanceof AdHocCar || car instanceof ReserveCar) {
-            	freeLocation = simulatorView.getFirstFreeLocation();
-            }
-            else
-            {
-            	freeLocation = simulatorView.getFirstPaidFreeLocation();
-            }
-            simulatorView.setCarAt(freeLocation, car);
-            i++;
+        // Look at first car in line
+        Car car = queue.checkCar();
+        //if reservation :
+        if (car instanceof ReserveSpot) {
+        	while (queue.carsInQueue()>0 && 
+        			simulatorView.getNumberOfOpenSpots()>0 &&
+        			i<reserveSpeed) {
+                car = queue.removeCar();
+                Location freeLocation;
+                freeLocation = simulatorView.getFirstFreeLocation();
+                simulatorView.setCarAt(freeLocation, car);
+                i++;
+        	}
         }
-    }
-    
-    private void paidCarsEntering(CarQueue queue){
-        int i=0;
-        // Remove car from the front of the queue and assign to a parking space.
-    	while (queue.carsInQueue()>0 && 
-    			simulatorView.getNumberOfPaidOpenSpots()>0 &&
-    			i<enterSpeed) {
-            Car car = queue.removeCar();
-            Location freeLocation;
-            freeLocation = simulatorView.getFirstPaidFreeLocation();
-            simulatorView.setCarAt(freeLocation, car);
-            i++;
-        }
-    }
-    
-    private void reservationsMaking(CarQueue queue){
-        int i=0;
-        // Remove car from the front of the queue and assign to a parking space.
-    	while (queue.carsInQueue()>0 && 
-    			simulatorView.getNumberOfOpenSpots()>0 &&
-    			i<enterSpeed) {
-            Car car = queue.removeCar();
-            Location freeLocation;
-            freeLocation = simulatorView.getFirstFreeLocation();
-            simulatorView.setCarAt(freeLocation, car);
-            i++;
-        }
-    }
-    
-    private void reserveCarsEntering(CarQueue queue){
-        int i=0;
-        // Remove car from the front of the queue and assign to a parking space.
-    	while (queue.carsInQueue()>0 && 
-    			simulatorView.getNumberOfReserveOpenSpots()>0 &&
-    			i<enterSpeed) {
-            Car car = queue.removeCar();
-            Location freeLocation;
-            freeLocation = simulatorView.getFirstReserveFreeLocation();
-            simulatorView.removeCarAt(freeLocation);
-            simulatorView.setCarAt(freeLocation, car);
-            i++;
+        //if any car:
+        else {        	
+        	while (queue.carsInQueue()>0 && 
+        			(simulatorView.getNumberOfOpenSpots()>0 || 
+        			simulatorView.getNumberOfPaidOpenSpots()>0 || 
+        			simulatorView.getNumberOfReserveOpenSpots()>0) &&
+        			i<enterSpeed) {
+        		car = queue.checkCar();
+        		Location freeLocation = null;
+        		Boolean spot = false; //Is there a spot available?
+        		if((car instanceof AdHocCar) && simulatorView.getNumberOfOpenSpots()>0) {
+        			freeLocation = simulatorView.getFirstFreeLocation();
+        			spot = true;
+        		}
+        		else if (car instanceof ParkingPassCar && simulatorView.getNumberOfPaidOpenSpots()>0)
+        		{
+        			freeLocation = simulatorView.getFirstPaidFreeLocation();
+        			spot = true;
+        		}
+        		else if (car instanceof ReserveCar && simulatorView.getNumberOfReserveOpenSpots()>0)
+        		{
+        			freeLocation = simulatorView.getFirstReserveFreeLocation();
+        			simulatorView.removeCarAt(freeLocation);
+        			spot = true;
+        		}
+        		if (spot == true) {
+        			car = queue.removeCar();
+        			simulatorView.setCarAt(freeLocation, car);
+        			i++;
+        		}
+        		else
+        		{
+        			i = enterSpeed; // if no spot is available, end loop
+        		}
+        	}
         }
     }
     
@@ -283,7 +272,7 @@ public class Simulator {
     	case RESERVE:
             for (int i = 0; i < numberOfCars; i++) {
             	if(simulatorView.getNumberOfReserveOpenSpots() > 0) {
-            		reservationCarQueue.addCar(new ReserveCar());
+            		entrancePassQueue.addCar(new ReserveCar());
             	}
             }
             break;
