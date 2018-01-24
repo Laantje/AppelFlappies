@@ -10,14 +10,17 @@ public class SimulatorView extends JFrame {
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
+    private int numberOfPaidOpenSpots;
     private int numberOfOpenSpots;
+    private int numberOfReserveOpenSpots;
     private Car[][][] cars;
 
    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
        this.numberOfFloors = numberOfFloors;
        this.numberOfRows = numberOfRows;
        this.numberOfPlaces = numberOfPlaces;
-       this.numberOfOpenSpots = numberOfFloors*numberOfRows*numberOfPlaces;
+       this.numberOfOpenSpots =(numberOfFloors-1)*numberOfRows*numberOfPlaces;
+       this.numberOfPaidOpenSpots =1*numberOfRows*numberOfPlaces;
        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
        
        carParkView = new CarParkView();
@@ -47,9 +50,9 @@ public class SimulatorView extends JFrame {
    }
 
    public int getNumberOfOpenSpots(){
-   	return numberOfOpenSpots;
+   		return numberOfOpenSpots;
    }
-   
+
    //Geef tijd door aan carParkView
    public void giveTime(int m, int h, int d) {
 	   carParkView.updateTime(m,h,d); //Verstuur de tijd naar carParkView
@@ -59,6 +62,14 @@ public class SimulatorView extends JFrame {
    public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
 	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
    }
+
+   public int getNumberOfPaidOpenSpots(){
+	   	return numberOfPaidOpenSpots;
+   }
+   
+   public int getNumberOfReserveOpenSpots(){
+	   	return numberOfReserveOpenSpots;
+  }
    
    public Car getCarAt(Location location) {
        if (!locationIsValid(location)) {
@@ -75,7 +86,18 @@ public class SimulatorView extends JFrame {
        if (oldCar == null) {
            cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
            car.setLocation(location);
-           numberOfOpenSpots--;
+           if (car instanceof AdHocCar || car instanceof ReserveCar) {
+        	   numberOfOpenSpots--;
+           }
+           else if(car instanceof ParkingPassCar)
+           {
+        	   numberOfPaidOpenSpots--;
+           }
+           else if(car instanceof ReserveSpot)
+           {
+        	   numberOfOpenSpots--;
+        	   numberOfReserveOpenSpots++;
+           }  
            return true;
        }
        return false;
@@ -91,7 +113,18 @@ public class SimulatorView extends JFrame {
        }
        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
        car.setLocation(null);
-       numberOfOpenSpots++;
+       if (car instanceof AdHocCar || car instanceof ReserveCar) {
+    	   numberOfOpenSpots++;
+       }
+       else if(car instanceof ParkingPassCar)
+       {
+    	   numberOfPaidOpenSpots++;
+       }
+       else if(car instanceof ReserveSpot)
+       {
+    	   numberOfReserveOpenSpots--;
+    	   numberOfOpenSpots++;
+       }    
        return car;
    }
 
@@ -101,6 +134,20 @@ public class SimulatorView extends JFrame {
                for (int place = 0; place < getNumberOfPlaces(); place++) {
                    Location location = new Location(floor, row, place);
                    if (getCarAt(location) == null) {
+                       return location;
+                   }
+               }
+           }
+       }
+       return null;
+   }
+   
+   public Location getFirstReserveFreeLocation() {
+       for (int floor = 1; floor < getNumberOfFloors(); floor++) {
+           for (int row = 0; row < getNumberOfRows(); row++) {
+               for (int place = 0; place < getNumberOfPlaces(); place++) {
+                   Location location = new Location(floor, row, place);
+                   if (getCarAt(location) instanceof ReserveSpot) {
                        return location;
                    }
                }
@@ -319,21 +366,20 @@ public class SimulatorView extends JFrame {
                	for(int place = 0; place < tempNumberOfPlaces; place++) {
                		Color color = null;
                		Location location = new Location(floor, row, place);
-                    Car car = getCarAt(location);
-                    if(car == null) {
-                    	switch (location.getType()) {
-                        	case 0:  color = new Color(196, 213, 239);
-                               break;
-                            case 1:  color = Color.white;
-                               break;
-                            case 2:  color = Color.green;
-                               break;
-                       	}
-                    }
-                   	else {
-                    	color = car.getColor();
-                    }
-                    drawPlace(graphics, location, color);
+                       Car car = getCarAt(location);
+                       if(car == null) {
+                       		switch (location.getType()) {
+                               case 0:  color = new Color(196, 213, 239);
+                                        break;
+                               case 1:  color = new Color(255, 216, 214);
+                                        break;
+                       		}
+                       }
+                       else {
+                       	color = car.getColor();
+                       }
+                       
+                       drawPlace(graphics, location, color);
                	}
            }
         }

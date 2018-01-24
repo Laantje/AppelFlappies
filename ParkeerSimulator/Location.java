@@ -7,7 +7,7 @@ public class Location {
     private int floor;
     private int row;
     private int place;
-    private int type; // 0 = abonnee plek, 1 = reguliere plek, 2 = gereserveerd
+    private int type; // 0 = abonnee plek, 1 = reguliere plek
 
 
     /**
@@ -85,5 +85,4 @@ public class Location {
     public int getType() {
         return type;
     }
-
 }
