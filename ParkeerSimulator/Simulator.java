@@ -7,9 +7,12 @@ public class Simulator {
 	private static final String AD_HOC = "1";
 	private static final String PASS = "2";
 	private static final String RESERVE = "3";
+	private static final String RESERVATION = "4";
 	
 	private CarQueue entranceCarQueue;
     private CarQueue entrancePassQueue;
+    private CarQueue reservationQueue;
+    private CarQueue reservationCarQueue;
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
     private SimulatorView simulatorView;
@@ -20,21 +23,26 @@ public class Simulator {
 
     private int tickPause = 100;
 
-    int weekDayArrivals = 100; // average number of arriving cars per hour
+    int weekDayArrivals = 200; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = weekDayPassArrivals / 10; // average number of arriving cars per hour
-    int weekDayReserves = 20; // average number of reserves per hour
-    int weekendReserves = 200; // average number of reserves per hour
+    int weekDayReserves = 100; // average number of reserves per hour
+    int weekendReserves = 50; // average number of reserves per hour
+    int weekDayReservesArrivals = 30; // average number of arriving reserves per hour
+    int weekendReservesArrivals = 50; // average number of arriving reserves per hour
 
     int enterSpeed = 3; // number of cars that can enter per minute
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
+    int reserveSpeed = 10; // number of reservations that can be made per minute
 
     public Simulator() {
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
+        reservationQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
+        reservationCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 5, 34);
     }
@@ -78,7 +86,9 @@ public class Simulator {
     private void handleEntrance(){
     	carsArriving();
     	paidCarsEntering(entrancePassQueue);
-    	carsEntering(entranceCarQueue);  	
+    	carsEntering(entranceCarQueue);
+    	reserveCarsEntering(reservationCarQueue);
+    	reservationsMaking(reservationQueue);
     }
     
     private void handleExit(){
@@ -139,8 +149,10 @@ public class Simulator {
         addArrivingCars(numberOfCars, AD_HOC);    	
     	numberOfCars=getNumberOfCars(tempWeekDayPassArrivals, tempWeekendPassArrivals);
         addArrivingCars(numberOfCars, PASS);
+        numberOfCars=getNumberOfCars(weekDayReservesArrivals, weekendReservesArrivals);
+        addArrivingCars(numberOfCars, RESERVE);
         numberOfCars=getNumberOfCars(weekDayReserves, weekendReserves);
-        addArrivingCars(numberOfCars, RESERVE);   
+        addArrivingCars(numberOfCars, RESERVATION);
     }
 
     private void carsEntering(CarQueue queue){
@@ -172,6 +184,35 @@ public class Simulator {
             Car car = queue.removeCar();
             Location freeLocation;
             freeLocation = simulatorView.getFirstPaidFreeLocation();
+            simulatorView.setCarAt(freeLocation, car);
+            i++;
+        }
+    }
+    
+    private void reservationsMaking(CarQueue queue){
+        int i=0;
+        // Remove car from the front of the queue and assign to a parking space.
+    	while (queue.carsInQueue()>0 && 
+    			simulatorView.getNumberOfOpenSpots()>0 &&
+    			i<enterSpeed) {
+            Car car = queue.removeCar();
+            Location freeLocation;
+            freeLocation = simulatorView.getFirstFreeLocation();
+            simulatorView.setCarAt(freeLocation, car);
+            i++;
+        }
+    }
+    
+    private void reserveCarsEntering(CarQueue queue){
+        int i=0;
+        // Remove car from the front of the queue and assign to a parking space.
+    	while (queue.carsInQueue()>0 && 
+    			simulatorView.getNumberOfReserveOpenSpots()>0 &&
+    			i<enterSpeed) {
+            Car car = queue.removeCar();
+            Location freeLocation;
+            freeLocation = simulatorView.getFirstReserveFreeLocation();
+            simulatorView.removeCarAt(freeLocation);
             simulatorView.setCarAt(freeLocation, car);
             i++;
         }
@@ -241,7 +282,14 @@ public class Simulator {
             break;
     	case RESERVE:
             for (int i = 0; i < numberOfCars; i++) {
-            	entranceCarQueue.addCar(new ReserveCar());
+            	if(simulatorView.getNumberOfReserveOpenSpots() > 0) {
+            		reservationCarQueue.addCar(new ReserveCar());
+            	}
+            }
+            break;
+    	case RESERVATION:
+            for (int i = 0; i < numberOfCars; i++) {
+            	reservationQueue.addCar(new ReserveSpot());
             }
             break;
     	}

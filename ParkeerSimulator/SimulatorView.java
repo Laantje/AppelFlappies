@@ -13,6 +13,7 @@ public class SimulatorView extends JFrame {
     private int numberOfPlaces;
     private int numberOfPaidOpenSpots;
     private int numberOfOpenSpots;
+    private int numberOfReserveOpenSpots;
     private Car[][][] cars;
 
    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
@@ -58,6 +59,10 @@ public class SimulatorView extends JFrame {
 	   	return numberOfPaidOpenSpots;
    }
    
+   public int getNumberOfReserveOpenSpots(){
+	   	return numberOfReserveOpenSpots;
+  }
+   
    public Car getCarAt(Location location) {
        if (!locationIsValid(location)) {
            return null;
@@ -79,7 +84,12 @@ public class SimulatorView extends JFrame {
            else if(car instanceof ParkingPassCar)
            {
         	   numberOfPaidOpenSpots--;
-           }       
+           }
+           else if(car instanceof ReserveSpot)
+           {
+        	   numberOfOpenSpots--;
+        	   numberOfReserveOpenSpots++;
+           }  
            return true;
        }
        return false;
@@ -101,7 +111,12 @@ public class SimulatorView extends JFrame {
        else if(car instanceof ParkingPassCar)
        {
     	   numberOfPaidOpenSpots++;
-       }      
+       }
+       else if(car instanceof ReserveSpot)
+       {
+    	   numberOfReserveOpenSpots--;
+    	   numberOfOpenSpots++;
+       }    
        return car;
    }
 
@@ -111,6 +126,20 @@ public class SimulatorView extends JFrame {
                for (int place = 0; place < getNumberOfPlaces(); place++) {
                    Location location = new Location(floor, row, place);
                    if (getCarAt(location) == null) {
+                       return location;
+                   }
+               }
+           }
+       }
+       return null;
+   }
+   
+   public Location getFirstReserveFreeLocation() {
+       for (int floor = 1; floor < getNumberOfFloors(); floor++) {
+           for (int row = 0; row < getNumberOfRows(); row++) {
+               for (int place = 0; place < getNumberOfPlaces(); place++) {
+                   Location location = new Location(floor, row, place);
+                   if (getCarAt(location) instanceof ReserveSpot) {
                        return location;
                    }
                }
@@ -237,8 +266,6 @@ public class SimulatorView extends JFrame {
                                case 0:  color = new Color(196, 213, 239);
                                         break;
                                case 1:  color = new Color(255, 216, 214);
-                                        break;
-                               case 2:  color = Color.green;
                                         break;
                        		}
                        }
