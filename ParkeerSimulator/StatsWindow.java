@@ -15,7 +15,7 @@ public class StatsWindow extends JFrame {
 	
 	public StatsWindow() {
 		//Create Dimension
-		this.setPreferredSize(new Dimension(500, 200));
+		this.setPreferredSize(new Dimension(400, 200));
 		
 		//Maak JPanels aan
 		statsTextView = new StatsTextView();
@@ -79,31 +79,35 @@ public class StatsWindow extends JFrame {
 	
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
-		private ButtonGroup checkBoxGroup;
 		private JLabel checkBoxText;
-		private JRadioButton circleBox;
-		private JRadioButton lineBox;
-		private JRadioButton barBox;
+		private final static String circlePanelT = "Cirkel Diagram";
+		private final static String linePanelT = "Lijn Diagram";
+		private final static String barPanelT = "Staaf Diagram";
 		
 		public StatsGraphView() {
-			//Maak Jlabel aan en laat zien
+			//Zet de layout van deze JPanel
+			this.setLayout(new CardLayout());
+			
+			//Maak nieuwe combobox aan
+			String comboBoxItems[] = { circlePanelT, linePanelT, barPanelT };
+	        JComboBox comboBox = new JComboBox(comboBoxItems);
+	        comboBox.setEditable(false);
+	        //comboBox.addItemListener(this);
+	        
+			//Maak Jlabel aan
 	        checkBoxText = new JLabel("Kies soort diagram:");
-	        this.add(checkBoxText);
 	        
-	        //Maak checkboxes aan
-			circleBox = new JRadioButton("Cirkel", true);
-	        lineBox = new JRadioButton("Lijn", false);
-	        barBox = new JRadioButton("Staaf", false);
-	 
-	        //Voeg checkboxes toe aan buttongroup
-	        checkBoxGroup = new ButtonGroup();
-	        checkBoxGroup.add(circleBox);
-	        checkBoxGroup.add(lineBox);
-	        checkBoxGroup.add(barBox);
+	        //Maak keuze jpanels aan
+	        JPanel circlePanel = new JPanel();
+			JPanel linePanel = new JPanel();
+			JPanel barPanel = new JPanel();
 	        
-	        this.add(circleBox, BorderLayout.WEST);
-	        this.add(lineBox, BorderLayout.CENTER);
-	        this.add(barBox, BorderLayout.EAST);
+	        //Voeg de objects toe aan het scherm
+			this.add(checkBoxText);
+			this.add(comboBox);
+			this.add(circlePanel, circlePanelT);
+	        this.add(linePanel, linePanelT);
+	        this.add(barPanel, barPanelT);
 		}
 	}
 }
