@@ -11,14 +11,17 @@ public class SimulatorView extends JFrame {
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
+    private int numberOfPaidOpenSpots;
     private int numberOfOpenSpots;
+    private int numberOfReserveOpenSpots;
     private Car[][][] cars;
 
    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
        this.numberOfFloors = numberOfFloors;
        this.numberOfRows = numberOfRows;
        this.numberOfPlaces = numberOfPlaces;
-       this.numberOfOpenSpots =numberOfFloors*numberOfRows*numberOfPlaces;
+       this.numberOfOpenSpots =(numberOfFloors-1)*numberOfRows*numberOfPlaces;
+       this.numberOfPaidOpenSpots =1*numberOfRows*numberOfPlaces;
        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
        
        carParkView = new CarParkView();
@@ -49,8 +52,16 @@ public class SimulatorView extends JFrame {
    }
 
    public int getNumberOfOpenSpots(){
-   	return numberOfOpenSpots;
+   		return numberOfOpenSpots;
    }
+   
+   public int getNumberOfPaidOpenSpots(){
+	   	return numberOfPaidOpenSpots;
+   }
+   
+   public int getNumberOfReserveOpenSpots(){
+	   	return numberOfReserveOpenSpots;
+  }
    
    public Car getCarAt(Location location) {
        if (!locationIsValid(location)) {
@@ -67,7 +78,18 @@ public class SimulatorView extends JFrame {
        if (oldCar == null) {
            cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
            car.setLocation(location);
-           numberOfOpenSpots--;
+           if (car instanceof AdHocCar || car instanceof ReserveCar) {
+        	   numberOfOpenSpots--;
+           }
+           else if(car instanceof ParkingPassCar)
+           {
+        	   numberOfPaidOpenSpots--;
+           }
+           else if(car instanceof ReserveSpot)
+           {
+        	   numberOfOpenSpots--;
+        	   numberOfReserveOpenSpots++;
+           }  
            return true;
        }
        return false;
@@ -83,7 +105,18 @@ public class SimulatorView extends JFrame {
        }
        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
        car.setLocation(null);
-       numberOfOpenSpots++;
+       if (car instanceof AdHocCar || car instanceof ReserveCar) {
+    	   numberOfOpenSpots++;
+       }
+       else if(car instanceof ParkingPassCar)
+       {
+    	   numberOfPaidOpenSpots++;
+       }
+       else if(car instanceof ReserveSpot)
+       {
+    	   numberOfReserveOpenSpots--;
+    	   numberOfOpenSpots++;
+       }    
        return car;
    }
 
@@ -93,6 +126,20 @@ public class SimulatorView extends JFrame {
                for (int place = 0; place < getNumberOfPlaces(); place++) {
                    Location location = new Location(floor, row, place);
                    if (getCarAt(location) == null) {
+                       return location;
+                   }
+               }
+           }
+       }
+       return null;
+   }
+   
+   public Location getFirstReserveFreeLocation() {
+       for (int floor = 1; floor < getNumberOfFloors(); floor++) {
+           for (int row = 0; row < getNumberOfRows(); row++) {
+               for (int place = 0; place < getNumberOfPlaces(); place++) {
+                   Location location = new Location(floor, row, place);
+                   if (getCarAt(location) instanceof ReserveSpot) {
                        return location;
                    }
                }
@@ -218,9 +265,7 @@ public class SimulatorView extends JFrame {
                        		switch (location.getType()) {
                                case 0:  color = new Color(196, 213, 239);
                                         break;
-                               case 1:  color = Color.white;
-                                        break;
-                               case 2:  color = Color.green;
+                               case 1:  color = new Color(255, 216, 214);
                                         break;
                        		}
                        }
