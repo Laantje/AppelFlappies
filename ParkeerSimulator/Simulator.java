@@ -19,10 +19,15 @@ public class Simulator {
     private int day = 0; //Maandag = 0; Dinsdag = 1; Woensdag = 2; enzovoort...
     private int hour = 0;
     private int minute = 0;
+    
+    private int totalParkedCars = 0;
+    private int parkedCars = 0;
+    private int parkedPassCars = 0;
+    private int parkedReservedCars = 0;
 
     private int tickPause = 100;
 
-    int weekDayArrivals = 200; // average number of arriving cars per hour
+    int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = weekDayPassArrivals / 10; // average number of arriving cars per hour
@@ -62,6 +67,10 @@ public class Simulator {
             e.printStackTrace();
         }
     	handleEntrance();
+    	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
+    	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
+    	//Geef stats door aan SimulatorView
+    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars);
     }
 
     private void advanceTime(){
@@ -78,7 +87,7 @@ public class Simulator {
         while (day > 6) {
             day -= 7;
         }
-
+        simulatorView.giveTime(minute, hour, day); //Verstuur de tijd naar carParkView
     }
 
     private void handleEntrance(){
@@ -103,10 +112,32 @@ public class Simulator {
     private void carsArriving(){
     	//Maak tijdelijke variabelen aan zodat die aangepast kunnen 
     	//worden in de spitsuur voor efficientie
-    	int tempWeekDayArrivals = weekDayArrivals;
-    	int tempWeekDayPassArrivals = weekDayPassArrivals;
-    	int tempWeekendArrivals = weekendArrivals;
-    	int tempWeekendPassArrivals = weekendPassArrivals;
+    	int tempWeekDayArrivals;
+    	int tempWeekDayPassArrivals;
+    	int tempWeekendArrivals;
+    	int tempWeekendPassArrivals;
+    	
+    	//'s Nachts komen er minder mensen
+    	if(hour >= 0 && hour < 6) {
+    		tempWeekDayArrivals = weekDayArrivals / 5;
+    		tempWeekDayPassArrivals = weekDayPassArrivals / 3;
+    		tempWeekendArrivals = weekendArrivals / 5;
+    		tempWeekendPassArrivals = weekendPassArrivals / 3;
+    	}
+    	//Tussen 6 & 7 en 22 & 24 komen er iets meer mensen
+    	else if(hour == 6 || day < 4 && hour >= 21 && hour < 24 || hour >= 22 && hour < 24) {
+    		tempWeekDayArrivals = weekDayArrivals / 4;
+    		tempWeekDayPassArrivals = weekDayPassArrivals / 3;
+    		tempWeekendArrivals = weekendArrivals / 4;
+    		tempWeekendPassArrivals = weekendPassArrivals / 3;
+    	}
+    	//Overdag komt de normale aantal
+    	else {
+    		tempWeekDayArrivals = weekDayArrivals;
+        	tempWeekDayPassArrivals = weekDayPassArrivals;
+        	tempWeekendArrivals = weekendArrivals;
+        	tempWeekendPassArrivals = weekendPassArrivals;
+    	}
     	
     	//Kijk naar de tijd en dag om spitsuren te bepalen
     	if(day < 5) 
@@ -182,17 +213,20 @@ public class Simulator {
         		if((car instanceof AdHocCar) && simulatorView.getNumberOfOpenSpots()>0) {
         			freeLocation = simulatorView.getFirstFreeLocation();
         			spot = true;
+              parkedCars++;
         		}
         		else if (car instanceof ParkingPassCar && simulatorView.getNumberOfPaidOpenSpots()>0)
         		{
         			freeLocation = simulatorView.getFirstPaidFreeLocation();
         			spot = true;
+              parkedPassCars++;
         		}
         		else if (car instanceof ReserveCar && simulatorView.getNumberOfReserveOpenSpots()>0)
         		{
         			freeLocation = simulatorView.getFirstReserveFreeLocation();
         			simulatorView.removeCarAt(freeLocation);
         			spot = true;
+              parkedReservedCars++;
         		}
         		if (spot == true) {
         			car = queue.removeCar();
@@ -261,12 +295,24 @@ public class Simulator {
     	switch(type) {
     	case AD_HOC: 
             for (int i = 0; i < numberOfCars; i++) {
-            	entranceCarQueue.addCar(new AdHocCar());
+            	//Kijk hoelaat het is
+            	if(hour < 20 && hour > 6) {
+            		entranceCarQueue.addCar(new AdHocCar(false));
+            	}
+            	else {
+            		entranceCarQueue.addCar(new AdHocCar(true));
+            	}
             }
             break;
     	case PASS:
             for (int i = 0; i < numberOfCars; i++) {
-            	entrancePassQueue.addCar(new ParkingPassCar());
+            	//Kijk hoelaat het is
+            	if(hour < 20 && hour > 6) {
+            		entrancePassQueue.addCar(new ParkingPassCar(false));
+            	}
+            	else {
+            		entranceCarQueue.addCar(new AdHocCar(true));
+            	}
             }
             break;
     	case RESERVE:
@@ -287,6 +333,17 @@ public class Simulator {
     private void carLeavesSpot(Car car){
     	simulatorView.removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
+        //Kijk wat voor klant het is; pas de stats aan
+        if(car instanceof AdHocCar) {
+        	parkedCars--;
+        }
+        else if(car instanceof ReserveCar) {
+        	parkedReservedCars--;
+        }
+        else
+        {
+        	parkedPassCars--;
+        }
     }
     
     public int getMinute() {

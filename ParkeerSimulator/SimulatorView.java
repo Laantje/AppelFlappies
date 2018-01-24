@@ -1,13 +1,12 @@
 package ParkeerSimulator;
 
-
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
-    //private TimeVisualizer timeVisualizer;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
@@ -28,7 +27,6 @@ public class SimulatorView extends JFrame {
 
        Container contentPane = getContentPane();
        contentPane.add(carParkView, BorderLayout.CENTER);
-       //contentPane.add(timeVisualizer, BorderLayout.NORTH);
        pack();
        setVisible(true);
 
@@ -54,7 +52,17 @@ public class SimulatorView extends JFrame {
    public int getNumberOfOpenSpots(){
    		return numberOfOpenSpots;
    }
+
+   //Geef tijd door aan carParkView
+   public void giveTime(int m, int h, int d) {
+	   carParkView.updateTime(m,h,d); //Verstuur de tijd naar carParkView
+   }
    
+   //Geef stats door aan statswindow
+   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
+	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
+   }
+
    public int getNumberOfPaidOpenSpots(){
 	   	return numberOfPaidOpenSpots;
    }
@@ -201,15 +209,52 @@ public class SimulatorView extends JFrame {
    }
    
    private class CarParkView extends JPanel {
-       
+       private StatsWindow statsWindow;
        private Dimension size;
-       private Image carParkImage;    
+       private Image carParkImage;
+       private JLabel clockDay;
+       private JLabel clockTime;
+       private JButton statsButton;
+       private int minute;
+       private int hour;
+       private int day;
    
        /**
         * Constructor for objects of class CarPark
         */
        public CarParkView() {
-           size = new Dimension(0, 0);
+    	   //Create Dimension
+           size = new Dimension(0, 0); 
+           
+           //Maak een nieuwe stats windows aan
+           statsWindow = new StatsWindow();
+           
+           //Maak JLabel voor tijd en dag aan
+           clockDay = new JLabel("Maandag");
+           clockTime = new JLabel(String.valueOf(hour) + ":" + String.valueOf(minute));
+           
+           //Maak de font groter
+           clockDay.setFont(new Font("", Font.PLAIN, 30));
+           clockTime.setFont(new Font("", Font.PLAIN, 30));
+           
+           //Voeg de stats button toe
+           statsButton = new JButton("Statistieken");
+           
+           //Geef de stats button een event
+           statsButton.addActionListener( new ActionListener()
+           {
+               public void actionPerformed(ActionEvent e)
+               {
+                   activateStatsWindow();
+               }
+           });
+           
+           //Voeg JLabel toe
+           this.add(clockDay);
+           this.add(clockTime);
+           
+           //Voeg JButton toe
+           this.add(statsButton);
        }
    
        /**
@@ -217,6 +262,17 @@ public class SimulatorView extends JFrame {
         */
        public Dimension getPreferredSize() {
            return new Dimension(800, 500);
+       }
+       
+       //Maak een nieuwe windows aan met stats
+       private void activateStatsWindow() {
+    	   //Kijk of stats window al open is
+    	   if(statsWindow.isVisible()) {
+    		   statsWindow.setVisible(false);
+    	   }
+    	   else {
+    		   statsWindow.setVisible(true);
+    	   }
        }
    
        /**
@@ -236,6 +292,56 @@ public class SimulatorView extends JFrame {
                // Rescale the previous image.
                g.drawImage(carParkImage, 0, 0, currentSize.width, currentSize.height, null);
            }
+       }
+       
+       public void updateTime(int m, int h, int d) {
+    	   //Zet de tijd variabelen
+    	   minute = m;
+    	   hour = h;
+    	   day = d;
+    	   
+    	   //Check welke dag het is
+    	   switch(day) {
+    	   		case 0:
+    	   			clockDay.setText("Maandag");
+    	   			break;
+    	   		case 1:
+    	   			clockDay.setText("Dinsdag");
+    	   			break;
+    	   		case 2:
+    	   			clockDay.setText("Woensdag");
+    	   			break;
+    	   		case 3:
+    	   			clockDay.setText("Donderdag");
+    	   			break;
+    	   		case 4:
+    	   			clockDay.setText("Vrijdag");
+    	   			break;
+    	   		case 5:
+    	   			clockDay.setText("Zaterdag");
+    	   			break;
+    	   		case 6:
+    	   			clockDay.setText("Zondag");
+    	   			break;
+    	   }
+    	   
+    	   //Zet de clock goed
+    	   if(hour < 10) {
+    		   if(minute < 10) {
+    			   clockTime.setText("0" + String.valueOf(hour) + ":0" + String.valueOf(minute));
+    		   }
+    		   else {
+    			   clockTime.setText("0" + String.valueOf(hour) + ":" + String.valueOf(minute));
+    		   }
+    	   }
+    	   else {
+    		   if(minute < 10) {
+    			   clockTime.setText(String.valueOf(hour) + ":0" + String.valueOf(minute));
+    		   }
+    		   else {
+    			   clockTime.setText(String.valueOf(hour) + ":" + String.valueOf(minute));
+    		   }
+    	   }
        }
    
        public void updateView() {
@@ -275,8 +381,8 @@ public class SimulatorView extends JFrame {
                        
                        drawPlace(graphics, location, color);
                	}
-               }
            }
+        }
            repaint();
        }
    
@@ -292,20 +398,4 @@ public class SimulatorView extends JFrame {
                    10 - 1); // TODO use dynamic size or constants
        }
    }
-   
-   private class TimeVisualizer extends JPanel { //IN CONSTRUCTION
-	   private int minute = 5;
-	   private int hour;
-	   private int day;
-	   private Graphics graphics;
-	   
-	   public TimeVisualizer() {
-		   graphics.drawString("Minutes: " + minute, 0,0);
-	   }
-	   
-       private void UpdateTime() {
-    	  //to be continued
-       }
-   }
-
 }
