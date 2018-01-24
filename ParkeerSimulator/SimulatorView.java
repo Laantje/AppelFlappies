@@ -168,7 +168,6 @@ public class SimulatorView extends JFrame {
        private JLabel clockDay;
        private JLabel clockTime;
        private JButton statsButton;
-       private boolean statsWindowActive;
        private int minute;
        private int hour;
        private int day;
@@ -182,7 +181,6 @@ public class SimulatorView extends JFrame {
            
            //Maak een nieuwe stats windows aan
            statsWindow = new StatsWindow();
-           statsWindowActive = false;
            
            //Maak JLabel voor tijd en dag aan
            clockDay = new JLabel("Maandag");
@@ -222,13 +220,11 @@ public class SimulatorView extends JFrame {
        //Maak een nieuwe windows aan met stats
        private void activateStatsWindow() {
     	   //Kijk of stats window al open is
-    	   if(statsWindowActive) {
+    	   if(statsWindow.isVisible()) {
     		   statsWindow.setVisible(false);
-    		   statsWindowActive = false;
     	   }
     	   else {
     		   statsWindow.setVisible(true);
-    		   statsWindowActive = true;
     	   }
        }
    
