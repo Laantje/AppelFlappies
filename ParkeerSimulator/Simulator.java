@@ -58,6 +58,7 @@ public class Simulator {
 
     private void tick() {
     	advanceTime();
+    	checkWindow();
     	handleExit();
     	updateViews();
     	// Pause.
@@ -88,6 +89,13 @@ public class Simulator {
             day -= 7;
         }
         simulatorView.giveTime(minute, hour, day); //Verstuur de tijd naar carParkView
+    }
+    
+    //Kijk of de main window nog open staat, zoja terminate program
+    private void checkWindow() {
+    	if(!simulatorView.isVisible()) {
+    		System.exit(0);
+    	}
     }
 
     private void handleEntrance(){
@@ -230,20 +238,20 @@ public class Simulator {
         		if((car instanceof AdHocCar) && simulatorView.getNumberOfOpenSpots()>0) {
         			freeLocation = simulatorView.getFirstFreeLocation();
         			spot = true;
-              parkedCars++;
+        			parkedCars++;
         		}
         		else if (car instanceof ParkingPassCar && simulatorView.getNumberOfPaidOpenSpots()>0)
         		{
         			freeLocation = simulatorView.getFirstPaidFreeLocation();
         			spot = true;
-              parkedPassCars++;
+        			parkedPassCars++;
         		}
         		else if (car instanceof ReserveCar && simulatorView.getNumberOfReserveOpenSpots()>0)
         		{
         			freeLocation = simulatorView.getFirstReserveFreeLocation();
         			simulatorView.removeCarAt(freeLocation);
         			spot = true;
-              parkedReservedCars++;
+        			parkedReservedCars++;
         		}
         		if (spot == true) {
         			car = queue.removeCar();
