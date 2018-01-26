@@ -29,6 +29,8 @@ public class Simulator {
     private int parkedReservedCars = 0;
 
     private int tickPause = 100;
+    
+    private int moneyTotal = 0;
 
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
@@ -74,7 +76,7 @@ public class Simulator {
     	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
     	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
     	//Geef stats door aan SimulatorView
-    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars);
+    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars, moneyTotal);
     }
 
     private void advanceTime(){
@@ -289,7 +291,7 @@ public class Simulator {
     	int i=0;
     	while (paymentCarQueue.carsInQueue()>0 && i < paymentSpeed){
             Car car = paymentCarQueue.removeCar();
-            // TODO Handle payment.
+            moneyTotal += 5;
             carLeavesSpot(car);
             i++;
     	}

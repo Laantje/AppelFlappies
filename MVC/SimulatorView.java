@@ -67,8 +67,8 @@ public class SimulatorView extends JFrame {
    }
    
    //Geef stats door aan statswindow
-   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
-	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
+   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash) {
+	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC, totalCash);
    }
 
    public int getNumberOfPaidOpenSpots(){

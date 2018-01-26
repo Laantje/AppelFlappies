@@ -30,8 +30,8 @@ public class StatsWindow extends JFrame {
 	}
 	
 	//Geef stats door aan statsView
-	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
-		   statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash) {
+		   statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC, totalCash);
 	}
 	
 	private class StatsTextView extends JPanel {
@@ -39,6 +39,7 @@ public class StatsWindow extends JFrame {
 		private JLabel parkedCarsT;
 	    private JLabel parkedPassCarsT;
 	    private JLabel parkedReservedCarsT;
+	    private JLabel moneyTotal;
 	   
 		public StatsTextView() {
 			//Maak een boxlayout van deze JPanel
@@ -49,32 +50,37 @@ public class StatsWindow extends JFrame {
 	        parkedCarsT = new JLabel("0");
 	        parkedPassCarsT = new JLabel("0");
 	        parkedReservedCarsT = new JLabel("0");
+	        moneyTotal = new JLabel("0");
 	           
 	        //Maak de font groter
 	        totalParkedCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedPassCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedReservedCarsT.setFont(new Font("", Font.PLAIN, 18));
+	        moneyTotal.setFont(new Font("", Font.PLAIN, 18));
 	        
 	        //Zet de labels in het midden
 	        totalParkedCarsT.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        parkedCarsT.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        parkedPassCarsT.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        parkedReservedCarsT.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        moneyTotal.setAlignmentX(Component.CENTER_ALIGNMENT);
 	           
 	        //Voeg JLabel toe
 	        this.add(totalParkedCarsT);
 	        this.add(parkedCarsT);
 	        this.add(parkedPassCarsT);
 	        this.add(parkedReservedCarsT);
+	        this.add(moneyTotal);
 		}
 		
 		//Laat actuele stats zien
-		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
+		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash) {
 			totalParkedCarsT.setText("Totaal aantal geparkeerde auto's: " + String.valueOf(totalC));
 			parkedCarsT.setText("Aantal willekeurig geparkeerde auto's: " + String.valueOf(parkedC));
 			parkedPassCarsT.setText("Aantal abonnement geparkeerde auto's: " + String.valueOf(parkedPC));
 			parkedReservedCarsT.setText("Aantal gereserveerde geparkeerde auto's: " + String.valueOf(parkedRC));
+			moneyTotal.setText("Geld verdient: " + String.valueOf(totalCash));
 		}
 	}
 	
