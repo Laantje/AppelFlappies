@@ -6,8 +6,8 @@ import Car.AdHocCar;
 import Car.Car;
 import Car.ParkingPassCar;
 import Car.ReserveCar;
+import Car.ReserveSpot;
 import Controller.Location;
-import Controller.ReserveSpot;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
