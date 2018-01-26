@@ -29,7 +29,11 @@ public class Simulator {
     private int parkedReservedCars = 0;
 
     private int tickPause = 100;
-
+    private int skipTicks;
+    
+    private boolean isPaused;
+    private boolean isSkipped;
+    
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
@@ -45,6 +49,9 @@ public class Simulator {
     int reserveSpeed = 10; // number of reservations that can be made per minute
 
     public Simulator() {
+    	isPaused = false;
+    	isSkipped = false;
+    	
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
         reservationQueue = new CarQueue();
@@ -54,27 +61,48 @@ public class Simulator {
     }
 
     public void run() {
-        for (int i = 0; i < 10000; i++) {
-            tick();
-        }
+    	//Do-while loop voor het blijven 'tick'en
+    	do {
+    		//Tick het programma; Dit houdt het draaiende
+    		tick();
+    		
+    		//Kijk of er 100 ticks geskipt moeten worden
+            if(isSkipped && skipTicks < 100) {
+            	skipTicks++;
+            }
+            else if(skipTicks == 100) {
+            	isSkipped = false;
+            	tickPause = 100;
+            }
+    	}
+    	while(simulatorView.isVisible());
+    	
+    	//Als de loop stopt, sluit het programma
+    	System.exit(0);
     }
 
     private void tick() {
-    	advanceTime();
-    	checkWindow();
-    	handleExit();
-    	updateViews();
+    	//Check status van simulator
+    	checkStatus();
+    	
     	// Pause.
         try {
             Thread.sleep(tickPause);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    	handleEntrance();
-    	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
-    	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
-    	//Geef stats door aan SimulatorView
-    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars);
+    	
+    	//Kijk of er gepauzeerd is
+    	if(!isPaused || isPaused && isSkipped) {
+    		advanceTime();
+        	handleExit();
+        	updateViews();
+        	handleEntrance();
+        	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
+        	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
+        	//Geef stats door aan SimulatorView
+        	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars);
+    	}
     }
 
     private void advanceTime(){
@@ -118,6 +146,22 @@ public class Simulator {
     	simulatorView.tick();
         // Update the car park view.
         simulatorView.updateView();	
+    }
+    
+    //Kijk wat de status is van de simulator
+    private void checkStatus() {    	
+    	//Check of de window nog open is
+    	checkWindow();
+    	
+    	//Check of er gepauzeerd is
+    	isPaused = simulatorView.checkPausedStatus();
+        
+        //Check of er geskipt is
+    	if(simulatorView.checkSkipStatus()) {
+    		isSkipped = true;
+    		skipTicks = 0;
+    		tickPause = 0;
+    	}
     }
     
     private void carsArriving(){

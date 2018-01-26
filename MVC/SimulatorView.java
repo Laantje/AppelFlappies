@@ -48,6 +48,15 @@ public class SimulatorView extends JFrame {
        carParkView.updateView();
    }
    
+   //Check of simulator gepauzeerd is
+   public boolean checkPausedStatus() {
+	   return toolsView.getPaused();
+   }
+   
+   public boolean checkSkipStatus() {
+	   return toolsView.getSkip();
+   }
+   
 	public int getNumberOfFloors() {
        return numberOfFloors;
    }
@@ -71,7 +80,7 @@ public class SimulatorView extends JFrame {
    
    //Geef stats door aan statswindow
    public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
-	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
+	   toolsView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
    }
 
    public int getNumberOfPaidOpenSpots(){
@@ -196,6 +205,7 @@ public class SimulatorView extends JFrame {
    }
 
    public void tick() {
+	   System.out.println("");
        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
            for (int row = 0; row < getNumberOfRows(); row++) {
                for (int place = 0; place < getNumberOfPlaces(); place++) {
@@ -220,12 +230,10 @@ public class SimulatorView extends JFrame {
    }
    
    private class CarParkView extends JPanel {
-       private StatsWindow statsWindow;
        private Dimension size;
        private Image carParkImage;
        private JLabel clockDay;
        private JLabel clockTime;
-       private JButton statsButton;
        private int minute;
        private int hour;
        private int day;
@@ -237,9 +245,6 @@ public class SimulatorView extends JFrame {
     	   //Create Dimension
            size = new Dimension(0, 0); 
            
-           //Maak een nieuwe stats windows aan
-           statsWindow = new StatsWindow();
-           
            //Maak JLabel voor tijd en dag aan
            clockDay = new JLabel("Maandag");
            clockTime = new JLabel(String.valueOf(hour) + ":" + String.valueOf(minute));
@@ -248,24 +253,9 @@ public class SimulatorView extends JFrame {
            clockDay.setFont(new Font("", Font.PLAIN, 30));
            clockTime.setFont(new Font("", Font.PLAIN, 30));
            
-           //Voeg de stats button toe
-           statsButton = new JButton("Statistieken");
-           
-           //Geef de stats button een event
-           statsButton.addActionListener( new ActionListener()
-           {
-               public void actionPerformed(ActionEvent e)
-               {
-                   activateStatsWindow();
-               }
-           });
-           
            //Voeg JLabel toe
            this.add(clockDay);
            this.add(clockTime);
-           
-           //Voeg JButton toe
-           this.add(statsButton);
        }
    
        /**
@@ -273,17 +263,6 @@ public class SimulatorView extends JFrame {
         */
        public Dimension getPreferredSize() {
            return new Dimension(800, 500);
-       }
-       
-       //Maak een nieuwe windows aan met stats
-       private void activateStatsWindow() {
-    	   //Kijk of stats window al open is
-    	   if(statsWindow.isVisible()) {
-    		   statsWindow.setVisible(false);
-    	   }
-    	   else {
-    		   statsWindow.setVisible(true);
-    	   }
        }
    
        /**
@@ -411,24 +390,118 @@ public class SimulatorView extends JFrame {
    }
    
    private class ToolsView extends JPanel {
+	   private StatsWindow statsWindow;
+	   private JLabel toolsText;
+	   private JLabel skipCell1;
+	   private JLabel skipCell2;
+	   private JButton pauseButton;
 	   private JButton skipButton;
+	   private JButton statsButton;
+	   private boolean isPaused;
+	   private boolean isSkipped;
 	   
-       public ToolsView() {
-    	 //Voeg de skip button toe
-         skipButton = new JButton("voer tekst");
+	   public ToolsView() {
+		  //Zet de layout van deze JPanel
+		  this.setLayout(new GridLayout(0,3));
+		  
+		  //Maak een nieuwe stats windows aan
+          statsWindow = new StatsWindow();
+		  
+		  //Zet booleans op false
+		  isPaused = false;
+		  isSkipped = false;
+		  
+		  //Maak cellskipper JLabel zonder text
+		  skipCell1 = new JLabel("");
+		  skipCell2 = new JLabel("");
+		  
+		  //Voeg JLabel toe en zet de font
+		  toolsText = new JLabel("Simulator Tools:", SwingConstants.CENTER);
+		  toolsText.setFont(new Font("", Font.PLAIN, 20));
+    	   
+		  //Voeg de buttons toe
+		  pauseButton = new JButton("Pauzeer");
+		  skipButton = new JButton("Sla 100 stappen over");
+          statsButton = new JButton("Statistieken");
+		   
+		  //Geef de pause button een event
+		  pauseButton.addActionListener( new ActionListener()
+		  {
+			  public void actionPerformed(ActionEvent e)
+              {
+                  PauseTime();
+              }
+		  });
            
-         //Geef de skip button een event
-         skipButton.addActionListener( new ActionListener()
-         {
-        	 public void actionPerformed(ActionEvent e)
-               {
-                   SkipTime();
-               }
-         });
+		  //Geef de skip button een event
+		  skipButton.addActionListener( new ActionListener()
+		  {
+			  public void actionPerformed(ActionEvent e)
+              {
+                  SkipTime();
+              }
+		  });
+		  
+		//Geef de stats button een event
+          statsButton.addActionListener( new ActionListener()
+          {
+              public void actionPerformed(ActionEvent e)
+              {
+                  activateStatsWindow();
+              }
+          });
+         
+		  //Voeg toe aan JPanel
+          this.add(skipCell1);
+          this.add(toolsText);
+          this.add(skipCell2);
+		  this.add(pauseButton);
+		  this.add(skipButton);
+		  this.add(statsButton);
+       }
+	   
+	   //Functie voor het 'get'en van de isPaused boolean
+	   public boolean getPaused() {
+		   return isPaused;
+	   }
+	   
+	   //Functie voor het 'get'en van de isSkipped boolean
+	   public boolean getSkip() {
+		   if(isSkipped) {
+			   isSkipped = false;
+			   return true;
+		   }
+		   else {
+			   return false;
+		   }
+	   }
+	   
+	   //Functie voor het pauzeren van de simulator
+	   private void PauseTime() {
+    	   if(isPaused) {
+    		   isPaused = false;
+    		   pauseButton.setText("Pauzeer");
+    	   }
+    	   else {
+    		   isPaused = true;
+    		   pauseButton.setText("Hervat");
+    	   }
        }
        
+	   //Functie voor het vooruit spoelen van de simulator
        private void SkipTime() {
-    	   
+    	   isSkipped = true;
+       }
+       
+       //Maak een nieuwe windows aan met stats
+       private void activateStatsWindow() {
+    	   //Kijk of stats window al open is
+    	   if(statsWindow.isVisible()) {
+    		   statsWindow.setVisible(false);
+    	   }
+    	   else {
+    		   statsWindow.setVisible(true);
+    	   }
        }
    }
 }
