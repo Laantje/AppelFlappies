@@ -1,6 +1,9 @@
-package ParkeerSimulator;
+package Controller;
 
 import java.util.Random;
+
+import Car.*;
+import MVC.SimulatorView;
 
 public class Simulator {
 

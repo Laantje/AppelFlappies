@@ -1,7 +1,9 @@
-package ParkeerSimulator;
- 
+package Controller;
 
 import java.util.Random;
+
+import Car.Car;
+
 import java.awt.*;
 
 public class ReserveSpot extends Car {

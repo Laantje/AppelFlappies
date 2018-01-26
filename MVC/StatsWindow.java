@@ -1,4 +1,4 @@
-package ParkeerSimulator;
+package MVC;
 
 import javax.swing.*;
 

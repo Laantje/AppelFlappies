@@ -1,4 +1,4 @@
-package ParkeerSimulator;
+package Controller;
  
 import java.awt.Color;
 

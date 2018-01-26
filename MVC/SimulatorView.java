@@ -1,6 +1,14 @@
-package ParkeerSimulator;
+package MVC;
 
 import javax.swing.*;
+
+import Car.AdHocCar;
+import Car.Car;
+import Car.ParkingPassCar;
+import Car.ReserveCar;
+import Controller.Location;
+import Controller.ReserveSpot;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

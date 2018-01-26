@@ -1,7 +1,9 @@
-package ParkeerSimulator;
+package Car;
  
 
 import java.awt.*;
+
+import Controller.Location;
 
 public abstract class Car {
 
