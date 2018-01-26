@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
+    private ToolsView toolsView;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
@@ -32,9 +33,11 @@ public class SimulatorView extends JFrame {
        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
        
        carParkView = new CarParkView();
+       toolsView = new ToolsView();
 
        Container contentPane = getContentPane();
        contentPane.add(carParkView, BorderLayout.CENTER);
+       contentPane.add(toolsView, BorderLayout.SOUTH);
        pack();
        setVisible(true);
 
@@ -404,6 +407,28 @@ public class SimulatorView extends JFrame {
                    60 + location.getPlace() * 10,
                    20 - 1,
                    10 - 1); // TODO use dynamic size or constants
+       }
+   }
+   
+   private class ToolsView extends JPanel {
+	   private JButton skipButton;
+	   
+       public ToolsView() {
+    	 //Voeg de skip button toe
+         skipButton = new JButton("voer tekst");
+           
+         //Geef de skip button een event
+         skipButton.addActionListener( new ActionListener()
+         {
+        	 public void actionPerformed(ActionEvent e)
+               {
+                   SkipTime();
+               }
+         });
+       }
+       
+       private void SkipTime() {
+    	   
        }
    }
 }

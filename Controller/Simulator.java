@@ -33,7 +33,7 @@ public class Simulator {
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
-    int weekendPassArrivals = weekDayPassArrivals / 10; // average number of arriving cars per hour
+    int weekendPassArrivals = weekDayPassArrivals / 2; // average number of arriving cars per hour
     int weekDayReserves = 20; // average number of reserves per hour
     int weekendReserves = 30; // average number of reserves per hour
     int weekDayReservesArrivals = weekDayReserves; // average number of arriving reserves per hour
@@ -123,21 +123,21 @@ public class Simulator {
     private void carsArriving(){
     	//Maak tijdelijke variabelen aan zodat die aangepast kunnen 
     	//worden in de spitsuur voor efficientie
-    	int tempWeekDayArrivals;
-    	int tempWeekDayPassArrivals;
-    	int tempWeekDayReserves;
-    	int tempWeekendArrivals;
-    	int tempWeekendPassArrivals;
-    	int tempWeekendReserves;
+    	int tempWeekDayArrivals = weekDayArrivals;
+    	int tempWeekDayPassArrivals = weekDayPassArrivals;
+    	int tempWeekDayReserves = weekDayReserves;
+    	int tempWeekendArrivals = weekendArrivals;
+    	int tempWeekendPassArrivals = weekendPassArrivals;
+    	int tempWeekendReserves = weekendReserves;
     	
     	//'s Nachts komen er minder mensen
     	if(hour >= 0 && hour < 6) {
     		tempWeekDayArrivals = weekDayArrivals / 5;
     		tempWeekDayPassArrivals = weekDayPassArrivals / 3;
     		tempWeekDayReserves = weekDayReserves / 3;
-    		tempWeekendArrivals = weekendArrivals / 5;
-    		tempWeekendPassArrivals = weekendPassArrivals / 3;
-    		tempWeekendReserves = weekendReserves / 3;
+    		tempWeekendArrivals = weekDayArrivals / 5;
+    		tempWeekendPassArrivals = weekDayPassArrivals / 3;
+    		tempWeekendReserves = weekDayReserves / 3;
     	}
     	//Tussen 6 & 7 en 22 & 24 komen er iets meer mensen
     	else if(hour == 6 || day < 4 && hour >= 21 && hour < 24 || hour >= 22 && hour < 24) {
