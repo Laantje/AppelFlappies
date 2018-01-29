@@ -115,6 +115,7 @@ public class Simulator {
         carsReadyToLeave();
         carsPaying();
         carsLeaving();
+        carsImpatient();
     }
     
     private void updateViews(){
@@ -390,6 +391,10 @@ public class Simulator {
         {
         	parkedPassCars--;
         }
+    }
+    
+    private void carsImpatient() {
+    	entranceCarQueue.removeRandom();
     }
     
     public int getMinute() {
