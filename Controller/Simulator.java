@@ -102,6 +102,7 @@ public class Simulator {
         	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
         	//Geef stats door aan SimulatorView
         	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars);
+        	simulatorView.giveQueues(entranceCarQueue.carsInQueue(), entrancePassQueue.carsInQueue(), reservationQueue.carsInQueue(), paymentCarQueue.carsInQueue(), exitCarQueue.carsInQueue());
     	}
     }
 

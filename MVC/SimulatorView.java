@@ -82,6 +82,11 @@ public class SimulatorView extends JFrame {
    public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
 	   toolsView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
    }
+   
+   //Geef stats van de queues door
+   public void giveQueues(int normalA, int passA, int reservationA, int payA, int exitA) {
+	   toolsView.statsWindow.giveCarQueues(normalA, passA, reservationA, payA, exitA);
+   }
 
    public int getNumberOfPaidOpenSpots(){
 	   	return numberOfPaidOpenSpots;
@@ -392,8 +397,6 @@ public class SimulatorView extends JFrame {
    private class ToolsView extends JPanel {
 	   private StatsWindow statsWindow;
 	   private JLabel toolsText;
-	   private JLabel skipCell1;
-	   private JLabel skipCell2;
 	   private JButton pauseButton;
 	   private JButton skipButton;
 	   private JButton statsButton;
@@ -410,10 +413,6 @@ public class SimulatorView extends JFrame {
 		  //Zet booleans op false
 		  isPaused = false;
 		  isSkipped = false;
-		  
-		  //Maak cellskipper JLabel zonder text
-		  skipCell1 = new JLabel("");
-		  skipCell2 = new JLabel("");
 		  
 		  //Voeg JLabel toe en zet de font
 		  toolsText = new JLabel("Simulator Tools:", SwingConstants.CENTER);
@@ -452,9 +451,9 @@ public class SimulatorView extends JFrame {
           });
          
 		  //Voeg toe aan JPanel
-          this.add(skipCell1);
+          this.add(new JLabel()); //Empty Cell
           this.add(toolsText);
-          this.add(skipCell2);
+          this.add(new JLabel()); //Empty Cell
 		  this.add(pauseButton);
 		  this.add(skipButton);
 		  this.add(statsButton);
