@@ -12,6 +12,8 @@ import Controller.Location;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
@@ -67,8 +69,8 @@ public class SimulatorView extends JFrame {
    }
    
    //Geef stats door aan statswindow
-   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash) {
-	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC, totalCash);
+   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
+	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC, totalCash, expectedCash);
    }
 
    public int getNumberOfPaidOpenSpots(){
@@ -151,17 +153,26 @@ public class SimulatorView extends JFrame {
    }
    
    public Location getFirstReserveFreeLocation() {
+	   ArrayList<Location> array = new ArrayList<Location>();
+	   int i = 0;
        for (int floor = 1; floor < getNumberOfFloors(); floor++) {
            for (int row = 0; row < getNumberOfRows(); row++) {
                for (int place = 0; place < getNumberOfPlaces(); place++) {
                    Location location = new Location(floor, row, place);
                    if (getCarAt(location) instanceof ReserveSpot) {
-                       return location;
+                       array.add(location);
+                       i++;
                    }
                }
            }
        }
-       return null;
+       if (array.size() == 0) {
+    	   return null;
+       }else {
+    	   int rand = new Random().nextInt(i);
+    	   System.out.print(rand);
+    	   return array.get(rand);
+       }
    }
    
    public Location getFirstPaidFreeLocation() {

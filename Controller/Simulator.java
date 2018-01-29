@@ -31,6 +31,7 @@ public class Simulator {
     private int tickPause = 100;
     
     private int moneyTotal = 0;
+    private int moneyExpected = 0;
 
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
@@ -76,7 +77,7 @@ public class Simulator {
     	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
     	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
     	//Geef stats door aan SimulatorView
-    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars, moneyTotal);
+    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars, moneyTotal, moneyExpected);
     }
 
     private void advanceTime(){
@@ -227,6 +228,7 @@ public class Simulator {
                 Location freeLocation;
                 freeLocation = simulatorView.getFirstFreeLocation();
                 simulatorView.setCarAt(freeLocation, car);
+                moneyTotal += 3;
                 i++;
         	}
         }
@@ -243,6 +245,7 @@ public class Simulator {
         		if((car instanceof AdHocCar) && simulatorView.getNumberOfOpenSpots()>0) {
         			freeLocation = simulatorView.getFirstFreeLocation();
         			spot = true;
+        			moneyExpected += 5;
         			parkedCars++;
         		}
         		else if (car instanceof ParkingPassCar && simulatorView.getNumberOfPaidOpenSpots()>0)
@@ -256,7 +259,14 @@ public class Simulator {
         			freeLocation = simulatorView.getFirstReserveFreeLocation();
         			simulatorView.removeCarAt(freeLocation);
         			spot = true;
+        			moneyExpected += 3;
         			parkedReservedCars++;
+        		}
+        		//Als er een gereserveerde auto in de rij staat en er geen gereserveerde plek is
+        		else if (car instanceof ReserveCar && simulatorView.getNumberOfReserveOpenSpots() == 0)
+        		{
+        			car = queue.removeCar();
+        			entranceCarQueue.addCar(new AdHocCar(false));
         		}
         		if (spot == true) {
         			car = queue.removeCar();
@@ -291,7 +301,13 @@ public class Simulator {
     	int i=0;
     	while (paymentCarQueue.carsInQueue()>0 && i < paymentSpeed){
             Car car = paymentCarQueue.removeCar();
-            moneyTotal += 5;
+            if(car instanceof AdHocCar) {
+            	moneyTotal += 5;
+            	moneyExpected -= 5;
+            }else if (car instanceof ReserveCar) {
+            	moneyTotal += 3;
+            	moneyExpected -= 3;
+            }
             carLeavesSpot(car);
             i++;
     	}
@@ -341,15 +357,15 @@ public class Simulator {
             		entrancePassQueue.addCar(new ParkingPassCar(false));
             	}
             	else {
-            		entranceCarQueue.addCar(new AdHocCar(true));
+            		entranceCarQueue.addCar(new AdHocCar(true)); //David?
             	}
             }
             break;
     	case RESERVE:
             for (int i = 0; i < numberOfCars; i++) {
-            	if(simulatorView.getNumberOfReserveOpenSpots() > 0) {
+            	//if(simulatorView.getNumberOfReserveOpenSpots() > 0) {
             		entrancePassQueue.addCar(new ReserveCar());
-            	}
+            	//}
             }
             break;
     	case RESERVATION:

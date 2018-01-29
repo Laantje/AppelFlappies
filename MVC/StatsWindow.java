@@ -30,8 +30,8 @@ public class StatsWindow extends JFrame {
 	}
 	
 	//Geef stats door aan statsView
-	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash) {
-		   statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC, totalCash);
+	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
+		   statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC, totalCash, expectedCash);
 	}
 	
 	private class StatsTextView extends JPanel {
@@ -40,6 +40,7 @@ public class StatsWindow extends JFrame {
 	    private JLabel parkedPassCarsT;
 	    private JLabel parkedReservedCarsT;
 	    private JLabel moneyTotal;
+	    private JLabel moneyExpected;
 	   
 		public StatsTextView() {
 			//Maak een boxlayout van deze JPanel
@@ -51,6 +52,7 @@ public class StatsWindow extends JFrame {
 	        parkedPassCarsT = new JLabel("0");
 	        parkedReservedCarsT = new JLabel("0");
 	        moneyTotal = new JLabel("0");
+	        moneyExpected = new JLabel("0");
 	           
 	        //Maak de font groter
 	        totalParkedCarsT.setFont(new Font("", Font.PLAIN, 18));
@@ -58,6 +60,7 @@ public class StatsWindow extends JFrame {
 	        parkedPassCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedReservedCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        moneyTotal.setFont(new Font("", Font.PLAIN, 18));
+	        moneyExpected.setFont(new Font("", Font.PLAIN, 18));
 	        
 	        //Zet de labels in het midden
 	        totalParkedCarsT.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -65,21 +68,24 @@ public class StatsWindow extends JFrame {
 	        parkedPassCarsT.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        parkedReservedCarsT.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        moneyTotal.setAlignmentX(Component.CENTER_ALIGNMENT);
-	           
+	        moneyExpected.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        
 	        //Voeg JLabel toe
 	        this.add(totalParkedCarsT);
 	        this.add(parkedCarsT);
 	        this.add(parkedPassCarsT);
 	        this.add(parkedReservedCarsT);
 	        this.add(moneyTotal);
+	        this.add(moneyExpected);
 		}
 		
 		//Laat actuele stats zien
-		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash) {
+		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
 			totalParkedCarsT.setText("Totaal aantal geparkeerde auto's: " + String.valueOf(totalC));
 			parkedCarsT.setText("Aantal willekeurig geparkeerde auto's: " + String.valueOf(parkedC));
 			parkedPassCarsT.setText("Aantal abonnement geparkeerde auto's: " + String.valueOf(parkedPC));
-			parkedReservedCarsT.setText("Aantal gereserveerde geparkeerde auto's: " + String.valueOf(parkedRC));
+			parkedReservedCarsT.setText("Aantal gereserveerde geparkeerde auto's: " + String.valueOf(parkedRC));			
+			moneyExpected.setText("Verwachte inkomsten: " + String.valueOf(expectedCash));
 			moneyTotal.setText("Geld verdient: " + String.valueOf(totalCash));
 		}
 	}
