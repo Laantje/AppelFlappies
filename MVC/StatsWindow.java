@@ -13,7 +13,6 @@ public class StatsWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private StatsTextView statsTextView;
 	private StatsGraphView statsGraphView;
-	private int totalParkedCars;
 	
 	public StatsWindow() {
 		//Create Dimension

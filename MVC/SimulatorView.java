@@ -229,11 +229,13 @@ public class SimulatorView extends JFrame {
    
    private class CarParkView extends JPanel {
        private StatsWindow statsWindow;
+       private AdminWindow adminWindow;
        private Dimension size;
        private Image carParkImage;
        private JLabel clockDay;
        private JLabel clockTime;
        private JButton statsButton;
+       private JButton adminButton;
        private int minute;
        private int hour;
        private int day;
@@ -247,6 +249,7 @@ public class SimulatorView extends JFrame {
            
            //Maak een nieuwe stats windows aan
            statsWindow = new StatsWindow();
+           adminWindow = new AdminWindow();
            
            //Maak JLabel voor tijd en dag aan
            clockDay = new JLabel("Maandag");
@@ -258,6 +261,7 @@ public class SimulatorView extends JFrame {
            
            //Voeg de stats button toe
            statsButton = new JButton("Statistieken");
+           adminButton = new JButton("Admin Tools");
            
            //Geef de stats button een event
            statsButton.addActionListener( new ActionListener()
@@ -268,12 +272,22 @@ public class SimulatorView extends JFrame {
                }
            });
            
+           //Geef de admin button een event
+           adminButton.addActionListener( new ActionListener()
+           {
+               public void actionPerformed(ActionEvent e)
+               {
+                   activateAdminWindow();
+               }
+           });
+           
            //Voeg JLabel toe
            this.add(clockDay);
            this.add(clockTime);
            
            //Voeg JButton toe
            this.add(statsButton);
+           this.add(adminButton);
        }
    
        /**
@@ -291,6 +305,17 @@ public class SimulatorView extends JFrame {
     	   }
     	   else {
     		   statsWindow.setVisible(true);
+    	   }
+       }
+       
+       //Maak een nieuwe window met admin tools
+       private void activateAdminWindow() {
+    	   //Kijk of admin window al open is
+    	   if(adminWindow.isVisible()) {
+    		   adminWindow.setVisible(false);
+    	   }
+    	   else {
+    		   adminWindow.setVisible(true);
     	   }
        }
    

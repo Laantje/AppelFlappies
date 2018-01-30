@@ -376,7 +376,7 @@ public class Simulator {
             		entrancePassQueue.addCar(new ParkingPassCar(false));
             	}
             	else {
-            		entranceCarQueue.addCar(new AdHocCar(true)); //David?
+            		entrancePassQueue.addCar(new ParkingPassCar(true));
             	}
             }
             break;
