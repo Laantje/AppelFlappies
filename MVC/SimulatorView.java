@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class SimulatorView extends JFrame {
@@ -72,6 +73,15 @@ public class SimulatorView extends JFrame {
    public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
 	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC, totalCash, expectedCash);
    }
+   
+   //Haal update op
+   public HashMap<String, Integer> getUpdateValues() {
+		return carParkView.adminWindow.getUpdateValues();
+   }
+   
+   public boolean getUpdateStatus() {
+		return carParkView.adminWindow.getUpdateStatus();
+   }
 
    public int getNumberOfPaidOpenSpots(){
 	   	return numberOfPaidOpenSpots;
@@ -79,7 +89,7 @@ public class SimulatorView extends JFrame {
    
    public int getNumberOfReserveOpenSpots(){
 	   	return numberOfReserveOpenSpots;
-  }
+   }
    
    public Car getCarAt(Location location) {
        if (!locationIsValid(location)) {

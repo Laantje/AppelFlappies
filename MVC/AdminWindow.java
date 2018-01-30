@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 public class AdminWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -28,6 +29,14 @@ public class AdminWindow extends JFrame {
 	    pack();
 	}
 	
+	public HashMap<String, Integer> getUpdateValues() {
+		return adminView.getUpdateValues();
+	}
+	
+	public boolean getUpdateStatus() {
+		return adminView.getUpdateStatus();
+	}
+	
 	private class AdminView extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
@@ -42,6 +51,9 @@ public class AdminWindow extends JFrame {
 	    
 	    private JButton submitButton;
 	    private JButton resetButton;
+
+		protected boolean updateNeeded = false;
+		HashMap<String, Integer>  map = new HashMap<>();
 
 		public AdminView() {
 			//Maak een gridlayout van deze JPanel
@@ -85,7 +97,7 @@ public class AdminWindow extends JFrame {
 	        this.add(paymentSpeed);
 	        this.add(paymentSpeedField);
 	        this.add(exitSpeed);
-	        this.add(exitSpeedField);
+	        this.add(exitSpeedField);   
 	        
 	        //Voeg JButtons toe
 	        this.add(submitButton);
@@ -96,12 +108,18 @@ public class AdminWindow extends JFrame {
 	        paymentSpeed.setText("Payment Speed: ");
 	        exitSpeed.setText("Exit Speed: ");
 	        
+	        //Hashmap initialiseren
+	        map.put("enterSpeed", 7);
+	        map.put("paymentSpeed", 5);
+			map.put("exitSpeed", 3);
+	        
 	        //Geef de submit button een event
 	           submitButton.addActionListener( new ActionListener()
 	           {
 	               public void actionPerformed(ActionEvent e)
 	               {
-	                   updateStats();
+	                   updateValues();
+	                   updateNeeded = true;
 	               }
 	           });
 	           
@@ -110,22 +128,35 @@ public class AdminWindow extends JFrame {
 	               public void actionPerformed(ActionEvent e)
 	               {
 	                   resetStats();
+	                   System.out.println(map.get("exitSpeed"));
 	               }
 	           });
 	        
 		}
 		
-		public void updateStats() {
+		public void updateValues() {
 			//Zet string om in Int
 			int enterSpeedValue = Integer.parseInt(enterSpeedField.getText());
-			System.out.println(enterSpeedValue);
-			
+			int paymentSpeedValue = Integer.parseInt(paymentSpeedField.getText());
+			int exitSpeedValue = Integer.parseInt(exitSpeedField.getText());
+			map.put("enterSpeed", enterSpeedValue);
+			map.put("paymentSpeed", paymentSpeedValue);
+			map.put("exitSpeed", exitSpeedValue);
+		}
+		
+		public HashMap<String, Integer> getUpdateValues() {
+			return map;
+		}
+		
+		public boolean getUpdateStatus() {
+			return updateNeeded;
 		}
 		
 		public void resetStats() {
 			//Zet string om in Int
-			int enterSpeedValue = Integer.parseInt(enterSpeedField.getText());
-			System.out.println(enterSpeedValue);
+			map.put("enterSpeed", 7);
+			map.put("paymentSpeed", 5);
+			map.put("exitSpeed", 3);
 		}
 
 	}

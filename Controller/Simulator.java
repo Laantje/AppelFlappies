@@ -4,6 +4,7 @@ import javax.swing.*;
 import sun.audio.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.HashMap;
 import java.util.Random;
 
 import Car.*;
@@ -72,6 +73,7 @@ public class Simulator {
     	checkWindow();
     	handleExit();
     	updateViews();
+    	checkStatus();
     	// Pause.
         try {
             Thread.sleep(tickPause);
@@ -107,6 +109,18 @@ public class Simulator {
     	if(!simulatorView.isVisible()) {
     		System.exit(0);
     	}
+    }
+    
+    public void updateEnterSpeed(int enterSpeed) {
+    	this.enterSpeed = enterSpeed;
+    }
+    
+    public void updatePaymentSpeed(int paymentSpeed) {
+    	this.paymentSpeed = paymentSpeed;
+    }
+    
+    public void updateExitSpeed(int exitSpeed) {
+    	this.exitSpeed = exitSpeed;
     }
 
     private void handleEntrance(){
@@ -298,6 +312,7 @@ public class Simulator {
         		}
         	}
         }
+        
     }
     
     private void carsReadyToLeave(){
@@ -426,4 +441,17 @@ public class Simulator {
     public int getDay() {
     	return day;
     }
+    
+    private void giveNewValues() {
+    	HashMap<String, Integer>  map = simulatorView.getUpdateValues();
+    	updateEnterSpeed(map.get("enterSpeed"));
+    	updatePaymentSpeed(map.get("paymentSpeed"));
+    	updateExitSpeed(map.get("exitSpeed"));
+	}
+    
+    public void checkStatus() {
+		if(simulatorView.getUpdateStatus() == true) {
+			giveNewValues();			
+		}
+	}
 }
