@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class StatsWindow extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private StatsTextView statsTextView;
 	private StatsGraphView statsGraphView;
 	private int totalParkedCars;
@@ -35,6 +36,7 @@ public class StatsWindow extends JFrame {
 	}
 	
 	private class StatsTextView extends JPanel {
+		private static final long serialVersionUID = 1L;
 		private JLabel totalParkedCarsT;
 		private JLabel parkedCarsT;
 	    private JLabel parkedPassCarsT;
@@ -92,6 +94,7 @@ public class StatsWindow extends JFrame {
 	
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
+		private static final long serialVersionUID = 1L;
 		private JPanel cards;
 		private JLabel checkBoxText;
 		private JLabel circleText;

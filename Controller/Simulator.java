@@ -1,5 +1,9 @@
 package Controller;
 
+import javax.swing.*;
+import sun.audio.*;
+import java.awt.event.*;
+import java.io.*;
 import java.util.Random;
 
 import Car.*;
@@ -54,6 +58,7 @@ public class Simulator {
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 5, 34);
+        music();
     }
 
     public void run() {
@@ -123,6 +128,19 @@ public class Simulator {
         // Update the car park view.
         simulatorView.updateView();	
     }
+    
+	public static void music(){		
+		InputStream in;
+	    try {
+	        in = new FileInputStream(new File("C:\\Users\\HVV\\Downloads\\Sound\\background.wav"));
+	        AudioStream song = new AudioStream(in);
+	        AudioPlayer.player.start(song);
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, e);
+	        System.out.print("file not found");
+	    }
+	    
+	}
     
     private void carsArriving(){
     	//Maak tijdelijke variabelen aan zodat die aangepast kunnen 
