@@ -157,6 +157,7 @@ public class StatsWindow extends JFrame {
 	
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
+		private BarGraphView barGraphView;
 		private LineGraphView lineGraphView;
 		private JPanel cards;
 		private JLabel checkBoxText;
@@ -187,16 +188,15 @@ public class StatsWindow extends JFrame {
 			//Maak Jlabel aan
 	        checkBoxText = new JLabel("Kies soort diagram:");
 	        circleText = new JLabel("Hier komt een cirkel diagram");
-	        lineText = new JLabel("Hier komt een lijn diagram");
-	        barText = new JLabel("Hier komt een staaf diagram");
-			
+	        
+	        //Create graphs
+			barGraphView = new BarGraphView();
 	        lineGraphView = new LineGraphView();
 	        
 			//Voeg objecten toe aan de cards
 			circlePanel.add(circleText);
-			linePanel.add(lineText);
 			linePanel.add(lineGraphView);
-			barPanel.add(barText);
+			barPanel.add(barGraphView);
 			
 			//Voeg de cards toe aan cards
 			cards.add(circlePanel, circlePanelT);
@@ -221,6 +221,7 @@ public class StatsWindow extends JFrame {
 		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
 			if(this.isVisible()) {
 				lineGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+				barGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
 			}
 		}
 		

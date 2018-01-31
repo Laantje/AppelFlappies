@@ -1,5 +1,7 @@
 package MVC;
 
+import java.awt.Dimension;
+
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
@@ -45,6 +47,7 @@ public class LineGraphView extends JPanel {
         this.chart = createChart(dataset);
         
         chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(550,350));
         this.add(chartPanel);
         
         isCreated = false;
