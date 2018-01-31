@@ -22,7 +22,7 @@ public class StatsWindow extends JFrame {
 	
 	public StatsWindow() {
 		//Create Dimension
-		this.setPreferredSize(new Dimension(500, 250));
+		this.setPreferredSize(new Dimension(500, 400));
 		
 		
 		
@@ -148,6 +148,8 @@ public class StatsWindow extends JFrame {
 			
 			//Zet de layouts van de panels
 			circlePanel.setLayout(new BoxLayout(circlePanel, BoxLayout.PAGE_AXIS));
+
+			
 			
 			//maak een pie chart aan.
 			pieChart = new JPanel();
@@ -156,8 +158,10 @@ public class StatsWindow extends JFrame {
 			model = new Model(); 
 			model.setAantal(0);
 			pieview = new PieView(model);
-			pieview.setBounds(0, 0, 200, 200);
+			pieview.setBounds(0, 0, 250, 200);
+			pieview.setBackground(Color.BLACK);
 			pieChart.add(pieview);
+			pieChart.setBackground(new Color(238,238,238));
 			pieChart.setVisible(true);
 
 			
@@ -184,6 +188,7 @@ public class StatsWindow extends JFrame {
 	        
 	        //Voeg objecten toe aan de cards
 	        circlePanel.add(pieChart);
+
 			linePanel.add(lineText);
 			barPanel.add(barText);
 	        
@@ -215,11 +220,7 @@ public class StatsWindow extends JFrame {
 		    }
 		}
 	
-		public void paintComponent(Graphics g) {
-			g.setColor(Color.BLUE);
-			g.fillRect(230, 50, 10, 10);
-		}
-	
 	
 	}
+
 }

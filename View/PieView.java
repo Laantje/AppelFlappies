@@ -12,7 +12,7 @@ public class PieView extends AbstractView {
 
 	public PieView(Model model) {
 		super(model);
-		setSize(200, 200);
+		setSize(250, 200);
 	}
 	
 	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
@@ -63,16 +63,22 @@ public class PieView extends AbstractView {
 
 	public void paintComponent(Graphics g) {
 		
+		g.setColor(new Color(238,238,238));
+		g.fillRect(200,0,50,200);
+		//g.setColor(Color.BLUE);
+		//g.fillRect(230, 70, 10, 10);
 		
 		
-		
-		g.setColor(Color.WHITE);
+		g.setColor(new Color(238,238,238));
 		g.fillRect(0, 0, 200, 200);
 		g.setColor(Color.BLUE);
 		g.fillArc(10, 10, 180, 180, 0, (int)this.parkedC + 1);
+		g.fillRect(230, 70, 10, 10);
 		g.setColor(Color.RED);
 		g.fillArc(10, 10, 180, 180, (int)this.parkedC, (int)this.parkedPC);
+		g.fillRect(230, 85, 10, 10);
 		g.setColor(Color.GREEN);
 		g.fillArc(10, 10, 180, 180, (int)this.parkedPC + (int)parkedC, (int)parkedRC);
+		g.fillRect(230, 100, 10, 10);
 }
 }
