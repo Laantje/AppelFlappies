@@ -11,9 +11,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class StatsWindow extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private StatsTextView statsTextView;
 	private StatsGraphView statsGraphView;
-	private int totalParkedCars;
 	
 	public StatsWindow() {
 		//Create Dimension
@@ -31,8 +31,8 @@ public class StatsWindow extends JFrame {
 	}
 	
 	//Geef stats door aan statsView
-	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
-		statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
+		statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC, totalCash, expectedCash);
 		statsGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
 	}
 	
@@ -46,11 +46,14 @@ public class StatsWindow extends JFrame {
 	}
 	
 	private class StatsTextView extends JPanel {
+    private static final long serialVersionUID = 1L;
 		//Titel
 		private JLabel totalParkedCarsT;
 		private JLabel parkedCarsT;
 	    private JLabel parkedPassCarsT;
 	    private JLabel parkedReservedCarsT;
+	    private JLabel moneyTotal;
+	    private JLabel moneyExpected;
 	    private JLabel normalQueueT;
 	    private JLabel passQueueT;
 	    private JLabel reservationQueueT;
@@ -72,6 +75,10 @@ public class StatsWindow extends JFrame {
 			//Maak een boxlayout van deze JPanel
 			this.setLayout(new GridLayout(0,2));
 			
+			//Maak JLabel voor geld aan
+	        moneyTotal = new JLabel("0");
+	        moneyExpected = new JLabel("0");
+
 			//Maak JLabels aan
 	        totalParkedCarsT = new JLabel("Totaal aantal geparkeerde auto's: ");
 	        parkedCarsT = new JLabel("Aantal regulier geparkeerde auto's: ");
@@ -99,6 +106,8 @@ public class StatsWindow extends JFrame {
 	        parkedCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedPassCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedReservedCarsT.setFont(new Font("", Font.PLAIN, 18));
+	        moneyTotal.setFont(new Font("", Font.PLAIN, 18));
+	        moneyExpected.setFont(new Font("", Font.PLAIN, 18));
 	        normalQueueT.setFont(new Font("", Font.PLAIN, 18));
 	        passQueueT.setFont(new Font("", Font.PLAIN, 18));
 	        reservationQueueT.setFont(new Font("", Font.PLAIN, 18));
@@ -117,13 +126,6 @@ public class StatsWindow extends JFrame {
 	        exitQueueAmount.setFont(new Font("", Font.PLAIN, 18));
 	        
 	        //Voeg JLabel toe
-	        this.add(totalParkedCarsT);
-	        this.add(totalParkedCarsAmount);
-	        this.add(parkedCarsT);
-	        this.add(parkedCarsAmount);
-	        this.add(parkedPassCarsT);
-	        this.add(parkedPassCarsAmount);
-	        this.add(parkedReservedCarsT);
 	        this.add(parkedReservedCarsAmount);
 	        this.add(normalQueueT);
 	        this.add(normalQueueAmount);
@@ -135,7 +137,9 @@ public class StatsWindow extends JFrame {
 	        this.add(payQueueAmount);
 	        this.add(exitQueueT);
 	        this.add(exitQueueAmount);
-		}
+	        this.add(moneyTotal);
+	        this.add(moneyExpected);
+    }
 		
 		//Geef stats van de queues door
 		public void updateQueues(int normalA, int passA, int reservationA, int payA, int exitA) {
@@ -147,16 +151,19 @@ public class StatsWindow extends JFrame {
 		}
 		
 		//Laat actuele stats zien
-		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
+		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
 			totalParkedCarsAmount.setText(String.valueOf(totalC));
 			parkedCarsAmount.setText(String.valueOf(parkedC));
 			parkedPassCarsAmount.setText(String.valueOf(parkedPC));
 			parkedReservedCarsAmount.setText(String.valueOf(parkedRC));
+      moneyExpected.setText("Verwachte inkomsten: " + String.valueOf(expectedCash));
+			moneyTotal.setText("Geld verdient: " + String.valueOf(totalCash));
 		}
 	}
 	
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
+		private static final long serialVersionUID = 1L;
 		private BarGraphView barGraphView;
 		private LineGraphView lineGraphView;
 		private JPanel cards;

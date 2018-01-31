@@ -12,6 +12,9 @@ import Controller.Location;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class SimulatorView extends JFrame {
 	private CarParkView carParkView;
@@ -79,9 +82,23 @@ public class SimulatorView extends JFrame {
 	   toolsView.statsWindow.giveHour(h); //Verstuur alleen het uur
    }
    
-   //Geef stats door aan statswindow
-   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
-	   toolsView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
+   //Geef values door aan adminwindow
+   public void giveStartValues(int enterSpeedStart, int enterSpeed, int paymentSpeedStart, int paymentSpeed, int exitSpeedStart, int exitSpeed, int reserveSpeedStart, int reserveSpeed) {
+	   carParkView.adminWindow.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
+   }
+   
+   //Haal update op
+   public HashMap<String, Integer> getUpdateValues() {
+		return carParkView.adminWindow.getUpdateValues();
+   }
+   
+   public boolean getUpdateStatus() {
+		return carParkView.adminWindow.getUpdateStatus();
+   }
+
+     //Geef stats door aan statswindow
+   public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
+	   toolsView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC, totalCash, expectedCash);
    }
    
    //Geef stats van de queues door
@@ -95,7 +112,7 @@ public class SimulatorView extends JFrame {
    
    public int getNumberOfReserveOpenSpots(){
 	   	return numberOfReserveOpenSpots;
-  }
+   }
    
    public Car getCarAt(Location location) {
        if (!locationIsValid(location)) {
@@ -169,17 +186,25 @@ public class SimulatorView extends JFrame {
    }
    
    public Location getFirstReserveFreeLocation() {
+	   ArrayList<Location> array = new ArrayList<Location>();
+	   int i = 0;
        for (int floor = 1; floor < getNumberOfFloors(); floor++) {
            for (int row = 0; row < getNumberOfRows(); row++) {
                for (int place = 0; place < getNumberOfPlaces(); place++) {
                    Location location = new Location(floor, row, place);
                    if (getCarAt(location) instanceof ReserveSpot) {
-                       return location;
+                       array.add(location);
+                       i++;
                    }
                }
            }
        }
-       return null;
+       if (array.size() == 0) {
+    	   return null;
+       }else {
+    	   int rand = new Random().nextInt(i);
+    	   return array.get(rand);
+       }
    }
    
    public Location getFirstPaidFreeLocation() {
@@ -236,10 +261,13 @@ public class SimulatorView extends JFrame {
    }
    
    private class CarParkView extends JPanel {
+       private AdminWindow adminWindow;
        private Dimension size;
        private Image carParkImage;
        private JLabel clockDay;
        private JLabel clockTime;
+       private JButton adminButton;
+
        private int minute;
        private int hour;
        private int day;
@@ -251,6 +279,8 @@ public class SimulatorView extends JFrame {
     	   //Create Dimension
            size = new Dimension(0, 0); 
            
+           adminWindow = new AdminWindow();
+           
            //Maak JLabel voor tijd en dag aan
            clockDay = new JLabel("Maandag");
            clockTime = new JLabel(String.valueOf(hour) + ":" + String.valueOf(minute));
@@ -259,6 +289,23 @@ public class SimulatorView extends JFrame {
            clockDay.setFont(new Font("", Font.PLAIN, 30));
            clockTime.setFont(new Font("", Font.PLAIN, 30));
            
+           adminButton = new JButton("Admin Tools");
+           
+           //Geef de admin button een event
+           adminButton.addActionListener( new ActionListener()
+           {
+               public void actionPerformed(ActionEvent e)
+               {
+                   activateAdminWindow();
+               }
+           });
+           
+           //Voeg JLabel toe
+           this.add(clockDay);
+           this.add(clockTime);
+           
+           this.add(adminButton);
+         
            //Voeg JLabel toe
            this.add(clockDay);
            this.add(clockTime);
@@ -269,6 +316,17 @@ public class SimulatorView extends JFrame {
         */
        public Dimension getPreferredSize() {
            return new Dimension(800, 500);
+       }
+       
+       //Maak een nieuwe window met admin tools
+       private void activateAdminWindow() {
+    	   //Kijk of admin window al open is
+    	   if(adminWindow.isVisible()) {
+    		   adminWindow.setVisible(false);
+    	   }
+    	   else {
+    		   adminWindow.setVisible(true);
+    	   }
        }
    
        /**
