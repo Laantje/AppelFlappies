@@ -1,5 +1,10 @@
 package Controller;
 
+import javax.swing.*;
+import sun.audio.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.HashMap;
 import java.util.Random;
 
 import Car.*;
@@ -29,11 +34,19 @@ public class Simulator {
     private int parkedReservedCars = 0;
 
     private int tickPause = 100;
-
+    private int skipTicks;
+    
+    private int moneyTotal = 0;
+    private int moneyExpected = 0;
+    
+    private boolean isPaused;
+    private boolean isSkipped;
+    private boolean timeAdvanced;
+    
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
-    int weekendPassArrivals = weekDayPassArrivals / 10; // average number of arriving cars per hour
+    int weekendPassArrivals = weekDayPassArrivals / 2; // average number of arriving cars per hour
     int weekDayReserves = 20; // average number of reserves per hour
     int weekendReserves = 30; // average number of reserves per hour
     int weekDayReservesArrivals = weekDayReserves; // average number of arriving reserves per hour
@@ -43,41 +56,69 @@ public class Simulator {
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
     int reserveSpeed = 10; // number of reservations that can be made per minute
+    
+    int enterSpeedStart = enterSpeed; // start value of number of cars that can enter per minute
+    int paymentSpeedStart = paymentSpeed; // start value of number of cars that can pay per minute
+    int exitSpeedStart = exitSpeed; // start value of number of cars that can leave per minute
+    int reserveSpeedStart = reserveSpeed; // start value of number of reservations that can be made per minute
 
     public Simulator() {
+    	isPaused = false;
+    	isSkipped = false;
+    	
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
         reservationQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 5, 34);
+        music();
     }
-
-    public void run() {
-        for (int i = 0; i < 10000; i++) {
-            tick();
-        }
+  
+  public void run() {
+      startValue();
+    	//Do-while loop voor het blijven 'tick'en
+    	do {
+    		//Tick het programma; Dit houdt het draaiende
+    		tick();
+    		
+    		//Kijk of er 100 ticks geskipt moeten worden
+            if(isSkipped && skipTicks < 100) {
+            	skipTicks++;
+            }
+            else if(skipTicks == 100) {
+            	isSkipped = false;
+            	tickPause = 100;
+            }
+    	}
+    	while(simulatorView.isVisible());
+    	
+    	//Als de loop stopt, sluit het programma
+    	System.exit(0);
     }
 
     private void tick() {
-    	advanceTime();
-    	checkWindow();
-    	handleExit();
-    	updateViews();
+    	//Check status van simulator
+    	checkStatus();
+    	
     	// Pause.
         try {
             Thread.sleep(tickPause);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    	handleEntrance();
-    	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
-    	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
-    	//Geef stats door aan SimulatorView
-    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars);
     	
-    	
-    	
+    	//Kijk of er gepauzeerd is
+    	if(!isPaused || isPaused && isSkipped) {
+    		advanceTime();
+        	handleExit();
+        	updateViews();
+        	handleEntrance();
+        	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
+        	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
+        	//Geef stats door aan SimulatorView
+        	sendStats();
+    	}
     }
     
 
@@ -88,6 +129,7 @@ public class Simulator {
         while (minute > 59) {
             minute -= 60;
             hour++;
+            
         }
         while (hour > 23) {
             hour -= 24;
@@ -99,11 +141,35 @@ public class Simulator {
         simulatorView.giveTime(minute, hour, day); //Verstuur de tijd naar carParkView
     }
     
+    private void sendStats() {
+    	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
+    	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
+    	//Geef stats door aan SimulatorView
+    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars, moneyTotal, moneyExpected); 
+    	simulatorView.giveQueues(entranceCarQueue.carsInQueue(), entrancePassQueue.carsInQueue(), reservationQueue.carsInQueue(), paymentCarQueue.carsInQueue(), exitCarQueue.carsInQueue());
+    }
+    
+    public void startValue() {
+    	simulatorView.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
+    }
+    
     //Kijk of de main window nog open staat, zoja terminate program
     private void checkWindow() {
     	if(!simulatorView.isVisible()) {
     		System.exit(0);
     	}
+    }
+    
+    public void updateEnterSpeed(int enterSpeed) {
+    	this.enterSpeed = enterSpeed;
+    }
+    
+    public void updatePaymentSpeed(int paymentSpeed) {
+    	this.paymentSpeed = paymentSpeed;
+    }
+    
+    public void updateExitSpeed(int exitSpeed) {
+    	this.exitSpeed = exitSpeed;
     }
 
     private void handleEntrance(){
@@ -117,6 +183,7 @@ public class Simulator {
         carsReadyToLeave();
         carsPaying();
         carsLeaving();
+        carsImpatient();
     }
     
     private void updateViews(){
@@ -124,25 +191,58 @@ public class Simulator {
         // Update the car park view.
         simulatorView.updateView();	
     }
+
+	public static void music(){		
+		InputStream in;
+	    try {
+	        in = new FileInputStream(new File("C:\\Users\\HVV\\Downloads\\Sound\\background.wav"));
+	        AudioStream song = new AudioStream(in);
+	        AudioPlayer.player.start(song);
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, e);
+	        System.out.print("file not found");
+	    } 
+	}
+  
+    //Kijk wat de status is van de simulator
+    private void checkStatus() {    	
+    	//Check of de window nog open is
+    	checkWindow();
+    	
+    	//Check of er gepauzeerd is
+    	isPaused = simulatorView.checkPausedStatus();
+        
+        //Check of er geskipt is
+    	if(simulatorView.checkSkipStatus()) {
+    		isSkipped = true;
+    		skipTicks = 0;
+    		tickPause = 0;
+    	}
+    	
+    	//Check of er iets met de admin tools is gebeurd
+    	if(simulatorView.getUpdateStatus() == true) {
+			giveNewValues();			
+		}
+    }
     
     private void carsArriving(){
     	//Maak tijdelijke variabelen aan zodat die aangepast kunnen 
     	//worden in de spitsuur voor efficientie
-    	int tempWeekDayArrivals;
-    	int tempWeekDayPassArrivals;
-    	int tempWeekDayReserves;
-    	int tempWeekendArrivals;
-    	int tempWeekendPassArrivals;
-    	int tempWeekendReserves;
+    	int tempWeekDayArrivals = weekDayArrivals;
+    	int tempWeekDayPassArrivals = weekDayPassArrivals;
+    	int tempWeekDayReserves = weekDayReserves;
+    	int tempWeekendArrivals = weekendArrivals;
+    	int tempWeekendPassArrivals = weekendPassArrivals;
+    	int tempWeekendReserves = weekendReserves;
     	
     	//'s Nachts komen er minder mensen
     	if(hour >= 0 && hour < 6) {
     		tempWeekDayArrivals = weekDayArrivals / 5;
     		tempWeekDayPassArrivals = weekDayPassArrivals / 3;
     		tempWeekDayReserves = weekDayReserves / 3;
-    		tempWeekendArrivals = weekendArrivals / 5;
-    		tempWeekendPassArrivals = weekendPassArrivals / 3;
-    		tempWeekendReserves = weekendReserves / 3;
+    		tempWeekendArrivals = weekDayArrivals / 5;
+    		tempWeekendPassArrivals = weekDayPassArrivals / 3;
+    		tempWeekendReserves = weekDayReserves / 3;
     	}
     	//Tussen 6 & 7 en 22 & 24 komen er iets meer mensen
     	else if(hour == 6 || day < 4 && hour >= 21 && hour < 24 || hour >= 22 && hour < 24) {
@@ -230,6 +330,7 @@ public class Simulator {
                 Location freeLocation;
                 freeLocation = simulatorView.getFirstFreeLocation();
                 simulatorView.setCarAt(freeLocation, car);
+                moneyTotal += 3;
                 i++;
         	}
         }
@@ -246,6 +347,7 @@ public class Simulator {
         		if((car instanceof AdHocCar) && simulatorView.getNumberOfOpenSpots()>0) {
         			freeLocation = simulatorView.getFirstFreeLocation();
         			spot = true;
+        			moneyExpected += 5;
         			parkedCars++;
         		}
         		else if (car instanceof ParkingPassCar && simulatorView.getNumberOfPaidOpenSpots()>0)
@@ -259,7 +361,14 @@ public class Simulator {
         			freeLocation = simulatorView.getFirstReserveFreeLocation();
         			simulatorView.removeCarAt(freeLocation);
         			spot = true;
+        			moneyExpected += 3;
         			parkedReservedCars++;
+        		}
+        		//Als er een gereserveerde auto in de rij staat en er geen gereserveerde plek is
+        		else if (car instanceof ReserveCar && simulatorView.getNumberOfReserveOpenSpots() == 0)
+        		{
+        			car = queue.removeCar();
+        			entranceCarQueue.addCar(new AdHocCar(false));
         		}
         		if (spot == true) {
         			car = queue.removeCar();
@@ -272,6 +381,7 @@ public class Simulator {
         		}
         	}
         }
+        
     }
     
     private void carsReadyToLeave(){
@@ -294,7 +404,13 @@ public class Simulator {
     	int i=0;
     	while (paymentCarQueue.carsInQueue()>0 && i < paymentSpeed){
             Car car = paymentCarQueue.removeCar();
-            // TODO Handle payment.
+            if(car instanceof AdHocCar) {
+            	moneyTotal += 5;
+            	moneyExpected -= 5;
+            }else if (car instanceof ReserveCar) {
+            	moneyTotal += 3;
+            	moneyExpected -= 3;
+            }
             carLeavesSpot(car);
             i++;
     	}
@@ -344,15 +460,15 @@ public class Simulator {
             		entrancePassQueue.addCar(new ParkingPassCar(false));
             	}
             	else {
-            		entranceCarQueue.addCar(new AdHocCar(true));
+            		entrancePassQueue.addCar(new ParkingPassCar(true));
             	}
             }
             break;
     	case RESERVE:
             for (int i = 0; i < numberOfCars; i++) {
-            	if(simulatorView.getNumberOfReserveOpenSpots() > 0) {
+            	//if(simulatorView.getNumberOfReserveOpenSpots() > 0) {
             		entrancePassQueue.addCar(new ReserveCar());
-            	}
+            	//}
             }
             break;
     	case RESERVATION:
@@ -379,6 +495,10 @@ public class Simulator {
         }
     }
     
+    private void carsImpatient() {
+    	entranceCarQueue.removeImpatient();
+    }
+    
     public int getMinute() {
     	return minute;
     }
@@ -390,4 +510,11 @@ public class Simulator {
     public int getDay() {
     	return day;
     }
+    
+    private void giveNewValues() {
+    	HashMap<String, Integer>  map = simulatorView.getUpdateValues();
+    	updateEnterSpeed(map.get("enterSpeed"));
+    	updatePaymentSpeed(map.get("paymentSpeed"));
+    	updateExitSpeed(map.get("exitSpeed"));
+	}
 }
