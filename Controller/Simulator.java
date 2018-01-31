@@ -117,7 +117,7 @@ public class Simulator {
         	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
         	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
         	//Geef stats door aan SimulatorView
-          sendStats();
+        	sendStats();
     	}
     }
 
@@ -144,7 +144,7 @@ public class Simulator {
     	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
     	//Geef stats door aan SimulatorView
     	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars, moneyTotal, moneyExpected); 
-      simulatorView.giveQueues(entranceCarQueue.carsInQueue(), entrancePassQueue.carsInQueue(), reservationQueue.carsInQueue(), paymentCarQueue.carsInQueue(), exitCarQueue.carsInQueue());
+    	simulatorView.giveQueues(entranceCarQueue.carsInQueue(), entrancePassQueue.carsInQueue(), reservationQueue.carsInQueue(), paymentCarQueue.carsInQueue(), exitCarQueue.carsInQueue());
     }
     
     public void startValue() {
@@ -216,6 +216,11 @@ public class Simulator {
     		skipTicks = 0;
     		tickPause = 0;
     	}
+    	
+    	//Check of er iets met de admin tools is gebeurd
+    	if(simulatorView.getUpdateStatus() == true) {
+			giveNewValues();			
+		}
     }
     
     private void carsArriving(){
@@ -489,7 +494,7 @@ public class Simulator {
     }
     
     private void carsImpatient() {
-    	entranceCarQueue.removeRandom();
+    	entranceCarQueue.removeImpatient();
     }
     
     public int getMinute() {
@@ -509,11 +514,5 @@ public class Simulator {
     	updateEnterSpeed(map.get("enterSpeed"));
     	updatePaymentSpeed(map.get("paymentSpeed"));
     	updateExitSpeed(map.get("exitSpeed"));
-	}
-    
-    public void checkStatus() {
-		if(simulatorView.getUpdateStatus() == true) {
-			giveNewValues();			
-		}
 	}
 }

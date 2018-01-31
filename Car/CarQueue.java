@@ -5,7 +5,7 @@ import java.util.Queue;
 import java.util.Random;
 
 public class CarQueue {
-    private Queue<Car> queue = new LinkedList<>();
+    private LinkedList<Car> queue = new LinkedList();
 
     public boolean addCar(Car car) {
         return queue.add(car);
@@ -23,14 +23,19 @@ public class CarQueue {
     	return queue.peek();
     }
     
-    public void removeRandom() {
+    public void removeImpatient() {
     	int size = queue.size();
     	int rand = new Random().nextInt(100);
-    	if (rand > 80) {
-    		if (size > 30) {
+    	if(size > 50 && rand > 10) {
+    		for(int i = 0; i < 10; i++) {
+    			size = queue.size();
     			int rand2 = new Random().nextInt(size);
-    			queue.remove(rand2);
+        		queue.remove(rand2);
     		}
+    	}
+    	else if(size > 30 && rand > 10) {
+    		int rand2 = new Random().nextInt(size);
+    		queue.remove(rand2);
     	}
     }
 }

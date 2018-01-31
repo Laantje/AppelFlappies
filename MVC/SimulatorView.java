@@ -84,16 +84,16 @@ public class SimulatorView extends JFrame {
    
    //Geef values door aan adminwindow
    public void giveStartValues(int enterSpeedStart, int enterSpeed, int paymentSpeedStart, int paymentSpeed, int exitSpeedStart, int exitSpeed, int reserveSpeedStart, int reserveSpeed) {
-	   carParkView.adminWindow.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
+	   toolsView.adminWindow.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
    }
    
    //Haal update op
    public HashMap<String, Integer> getUpdateValues() {
-		return carParkView.adminWindow.getUpdateValues();
+		return toolsView.adminWindow.getUpdateValues();
    }
    
    public boolean getUpdateStatus() {
-		return carParkView.adminWindow.getUpdateStatus();
+		return toolsView.adminWindow.getUpdateStatus();
    }
 
      //Geef stats door aan statswindow
@@ -261,12 +261,10 @@ public class SimulatorView extends JFrame {
    }
    
    private class CarParkView extends JPanel {
-       private AdminWindow adminWindow;
        private Dimension size;
        private Image carParkImage;
        private JLabel clockDay;
        private JLabel clockTime;
-       private JButton adminButton;
 
        private int minute;
        private int hour;
@@ -279,8 +277,6 @@ public class SimulatorView extends JFrame {
     	   //Create Dimension
            size = new Dimension(0, 0); 
            
-           adminWindow = new AdminWindow();
-           
            //Maak JLabel voor tijd en dag aan
            clockDay = new JLabel("Maandag");
            clockTime = new JLabel(String.valueOf(hour) + ":" + String.valueOf(minute));
@@ -289,23 +285,6 @@ public class SimulatorView extends JFrame {
            clockDay.setFont(new Font("", Font.PLAIN, 30));
            clockTime.setFont(new Font("", Font.PLAIN, 30));
            
-           adminButton = new JButton("Admin Tools");
-           
-           //Geef de admin button een event
-           adminButton.addActionListener( new ActionListener()
-           {
-               public void actionPerformed(ActionEvent e)
-               {
-                   activateAdminWindow();
-               }
-           });
-           
-           //Voeg JLabel toe
-           this.add(clockDay);
-           this.add(clockTime);
-           
-           this.add(adminButton);
-         
            //Voeg JLabel toe
            this.add(clockDay);
            this.add(clockTime);
@@ -316,17 +295,6 @@ public class SimulatorView extends JFrame {
         */
        public Dimension getPreferredSize() {
            return new Dimension(800, 500);
-       }
-       
-       //Maak een nieuwe window met admin tools
-       private void activateAdminWindow() {
-    	   //Kijk of admin window al open is
-    	   if(adminWindow.isVisible()) {
-    		   adminWindow.setVisible(false);
-    	   }
-    	   else {
-    		   adminWindow.setVisible(true);
-    	   }
        }
    
        /**
@@ -454,11 +422,13 @@ public class SimulatorView extends JFrame {
    }
    
    private class ToolsView extends JPanel {
+	   private AdminWindow adminWindow;
 	   private StatsWindow statsWindow;
 	   private JLabel toolsText;
 	   private JButton pauseButton;
 	   private JButton skipButton;
 	   private JButton statsButton;
+	   private JButton adminButton;
 	   private boolean isPaused;
 	   private boolean isSkipped;
 	   
@@ -466,7 +436,8 @@ public class SimulatorView extends JFrame {
 		  //Zet de layout van deze JPanel
 		  this.setLayout(new GridLayout(0,3));
 		  
-		  //Maak een nieuwe stats windows aan
+		  //Maak een nieuwe windows aan
+          adminWindow = new AdminWindow();
           statsWindow = new StatsWindow();
 		  
 		  //Zet booleans op false
@@ -481,6 +452,16 @@ public class SimulatorView extends JFrame {
 		  pauseButton = new JButton("Pauzeer");
 		  skipButton = new JButton("Sla 100 stappen over");
           statsButton = new JButton("Statistieken");
+          adminButton = new JButton("Admin Tools");
+          
+          //Geef de admin button een event
+          adminButton.addActionListener( new ActionListener()
+          {
+              public void actionPerformed(ActionEvent e)
+              {
+                  activateAdminWindow();
+              }
+          });
 		   
 		  //Geef de pause button een event
 		  pauseButton.addActionListener( new ActionListener()
@@ -512,6 +493,9 @@ public class SimulatorView extends JFrame {
 		  //Voeg toe aan JPanel
           this.add(new JLabel()); //Empty Cell
           this.add(toolsText);
+          this.add(new JLabel()); //Empty Cell
+          this.add(new JLabel()); //Empty Cell
+          this.add(adminButton);
           this.add(new JLabel()); //Empty Cell
 		  this.add(pauseButton);
 		  this.add(skipButton);
@@ -549,6 +533,17 @@ public class SimulatorView extends JFrame {
 	   //Functie voor het vooruit spoelen van de simulator
        private void SkipTime() {
     	   isSkipped = true;
+       }
+       
+       //Maak een nieuwe window met admin tools
+       private void activateAdminWindow() {
+    	   //Kijk of admin window al open is
+    	   if(adminWindow.isVisible()) {
+    		   adminWindow.setVisible(false);
+    	   }
+    	   else {
+    		   adminWindow.setVisible(true);
+    	   }
        }
        
        //Maak een nieuwe windows aan met stats

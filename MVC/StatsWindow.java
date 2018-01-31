@@ -17,7 +17,7 @@ public class StatsWindow extends JFrame {
 	
 	public StatsWindow() {
 		//Create Dimension
-		this.setPreferredSize(new Dimension(700, 700));
+		this.setPreferredSize(new Dimension(700, 720));
 		
 		//Maak JPanels aan
 		statsTextView = new StatsTextView();
@@ -52,8 +52,8 @@ public class StatsWindow extends JFrame {
 		private JLabel parkedCarsT;
 	    private JLabel parkedPassCarsT;
 	    private JLabel parkedReservedCarsT;
-	    private JLabel moneyTotal;
-	    private JLabel moneyExpected;
+	    private JLabel moneyTotalT;
+	    private JLabel moneyExpectedT;
 	    private JLabel normalQueueT;
 	    private JLabel passQueueT;
 	    private JLabel reservationQueueT;
@@ -65,6 +65,8 @@ public class StatsWindow extends JFrame {
 		private JLabel parkedCarsAmount;
 	    private JLabel parkedPassCarsAmount;
 	    private JLabel parkedReservedCarsAmount;
+	    private JLabel moneyTotalAmount;
+	    private JLabel moneyExpectedAmount;
 	    private JLabel normalQueueAmount;
 	    private JLabel passQueueAmount;
 	    private JLabel reservationQueueAmount;
@@ -74,10 +76,6 @@ public class StatsWindow extends JFrame {
 		public StatsTextView() {
 			//Maak een boxlayout van deze JPanel
 			this.setLayout(new GridLayout(0,2));
-			
-			//Maak JLabel voor geld aan
-	        moneyTotal = new JLabel("0");
-	        moneyExpected = new JLabel("0");
 
 			//Maak JLabels aan
 	        totalParkedCarsT = new JLabel("Totaal aantal geparkeerde auto's: ");
@@ -89,6 +87,8 @@ public class StatsWindow extends JFrame {
 	        reservationQueueT = new JLabel("Aantal gereserveerde klanten bij ingang: ");
 	        payQueueT = new JLabel("Aantal klanten aan het betalen: ");
 	        exitQueueT = new JLabel("Aantal klanten bij uitgang: ");
+	        moneyTotalT = new JLabel("Geld verdient: ");
+	        moneyExpectedT = new JLabel("Verwachte inkomsten: ");
 	        
 	        //Maak JLabels aan
 	        totalParkedCarsAmount = new JLabel("0");
@@ -100,14 +100,16 @@ public class StatsWindow extends JFrame {
 	        reservationQueueAmount = new JLabel("0");
 	        payQueueAmount = new JLabel("0");
 	        exitQueueAmount = new JLabel("0");
+	        moneyTotalAmount = new JLabel("0");
+	        moneyExpectedAmount = new JLabel("0");
 	           
 	        //Maak de font groter
 	        totalParkedCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedPassCarsT.setFont(new Font("", Font.PLAIN, 18));
 	        parkedReservedCarsT.setFont(new Font("", Font.PLAIN, 18));
-	        moneyTotal.setFont(new Font("", Font.PLAIN, 18));
-	        moneyExpected.setFont(new Font("", Font.PLAIN, 18));
+	        moneyTotalT.setFont(new Font("", Font.PLAIN, 18));
+	        moneyExpectedT.setFont(new Font("", Font.PLAIN, 18));
 	        normalQueueT.setFont(new Font("", Font.PLAIN, 18));
 	        passQueueT.setFont(new Font("", Font.PLAIN, 18));
 	        reservationQueueT.setFont(new Font("", Font.PLAIN, 18));
@@ -119,6 +121,8 @@ public class StatsWindow extends JFrame {
 	        parkedCarsAmount.setFont(new Font("", Font.PLAIN, 18));
 	        parkedPassCarsAmount.setFont(new Font("", Font.PLAIN, 18));
 	        parkedReservedCarsAmount.setFont(new Font("", Font.PLAIN, 18));
+	        moneyTotalAmount.setFont(new Font("", Font.PLAIN, 18));
+	        moneyExpectedAmount.setFont(new Font("", Font.PLAIN, 18));
 	        normalQueueAmount.setFont(new Font("", Font.PLAIN, 18));
 	        passQueueAmount.setFont(new Font("", Font.PLAIN, 18));
 	        reservationQueueAmount.setFont(new Font("", Font.PLAIN, 18));
@@ -126,6 +130,13 @@ public class StatsWindow extends JFrame {
 	        exitQueueAmount.setFont(new Font("", Font.PLAIN, 18));
 	        
 	        //Voeg JLabel toe
+	        this.add(totalParkedCarsT);
+	        this.add(totalParkedCarsAmount);
+	        this.add(parkedCarsT);
+	        this.add(parkedCarsAmount);
+	        this.add(parkedPassCarsT);
+	        this.add(parkedPassCarsAmount);
+	        this.add(parkedReservedCarsT);
 	        this.add(parkedReservedCarsAmount);
 	        this.add(normalQueueT);
 	        this.add(normalQueueAmount);
@@ -137,8 +148,10 @@ public class StatsWindow extends JFrame {
 	        this.add(payQueueAmount);
 	        this.add(exitQueueT);
 	        this.add(exitQueueAmount);
-	        this.add(moneyTotal);
-	        this.add(moneyExpected);
+	        this.add(moneyTotalT);
+	        this.add(moneyTotalAmount);
+	        this.add(moneyExpectedT);
+	        this.add(moneyExpectedAmount);
     }
 		
 		//Geef stats van de queues door
@@ -156,8 +169,8 @@ public class StatsWindow extends JFrame {
 			parkedCarsAmount.setText(String.valueOf(parkedC));
 			parkedPassCarsAmount.setText(String.valueOf(parkedPC));
 			parkedReservedCarsAmount.setText(String.valueOf(parkedRC));
-      moneyExpected.setText("Verwachte inkomsten: " + String.valueOf(expectedCash));
-			moneyTotal.setText("Geld verdient: " + String.valueOf(totalCash));
+			moneyExpectedAmount.setText(String.valueOf(expectedCash));
+			moneyTotalAmount.setText(String.valueOf(totalCash));
 		}
 	}
 	
