@@ -1,9 +1,12 @@
 package MVC;
 
+
 import javax.swing.*;
 
 import javafx.scene.layout.Pane;
 
+
+import View.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
@@ -13,27 +16,37 @@ public class StatsWindow extends JFrame {
 	private StatsTextView statsTextView;
 	private StatsGraphView statsGraphView;
 	private int totalParkedCars;
+
+	
+	
 	
 	public StatsWindow() {
 		//Create Dimension
 		this.setPreferredSize(new Dimension(500, 250));
 		
+		
+		
 		//Maak JPanels aan
 		statsTextView = new StatsTextView();
 		statsGraphView = new StatsGraphView();
-
+		
+		
+		 
 		//Voeg JPanels toe aan contentpane
 	    Container contentPane = getContentPane();
 	    contentPane.add(statsTextView, BorderLayout.NORTH);
-	    contentPane.add(statsGraphView, BorderLayout.SOUTH);
+	    contentPane.add(statsGraphView, BorderLayout.CENTER);
+	    //contentPane.add(pieChart, BorderLayout.CENTER);
 	    pack();
 	}
 	
 	//Geef stats door aan statsView
 	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
 		   statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+		   statsGraphView.updateTotalCars(totalC, parkedC, parkedPC, parkedRC);	
 	}
 	
+
 	private class StatsTextView extends JPanel {
 		private JLabel totalParkedCarsT;
 		private JLabel parkedCarsT;
@@ -78,9 +91,20 @@ public class StatsWindow extends JFrame {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
 		private JPanel cards;
+
 		private JLabel checkBoxText;
 		private JLabel circleText;
 		private JLabel lineText;
@@ -88,7 +112,16 @@ public class StatsWindow extends JFrame {
 		private final static String circlePanelT = "Cirkel Diagram";
 		private final static String linePanelT = "Lijn Diagram";
 		private final static String barPanelT = "Staaf Diagram";
+		private PieView pieview;
+		private Model model;
+		private JPanel pieChart;
+		private JButton testAantal;
+		private int totalCars;
+		private JLabel legendaTextN;
+		private JLabel legendaTextA;
+		private JLabel legendaTextG;
 		
+
 		public StatsGraphView() {
 			//Init borderlayout
 			this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -113,20 +146,52 @@ public class StatsWindow extends JFrame {
 			JPanel linePanel = new JPanel();
 			JPanel barPanel = new JPanel();
 			
-			//Voeg objecten toe aan de cards
-			circlePanel.add(circleText);
-			linePanel.add(lineText);
-			barPanel.add(barText);
+			//Zet de layouts van de panels
+			circlePanel.setLayout(new BoxLayout(circlePanel, BoxLayout.PAGE_AXIS));
+			
+			//maak een pie chart aan.
+			pieChart = new JPanel();
+			pieChart.setLayout(null);
+			pieChart.setSize(200,200);
+			model = new Model(); 
+			model.setAantal(0);
+			pieview = new PieView(model);
+			pieview.setBounds(0, 0, 200, 200);
+			pieChart.add(pieview);
+			pieChart.setVisible(true);
+
+			
+			//Maak pie chart legenda aan.
+			legendaTextN = new JLabel("Normale autos");
+			legendaTextN.setLayout(null);
+			legendaTextN.setBounds(250,50, 100, 50);
+			pieChart.add(legendaTextN);
+			
+			legendaTextA = new JLabel("Abbonementen");
+			legendaTextA.setLayout(null);
+			legendaTextA.setBounds(250,50, 100, 80);
+			pieChart.add(legendaTextA);
+			
+			legendaTextG = new JLabel("Reserveringen");
+			legendaTextG.setLayout(null);
+			legendaTextG.setBounds(250,50, 100, 110);
+			pieChart.add(legendaTextG);
 			
 			//Voeg de cards toe aan cards
 			cards.add(circlePanel, circlePanelT);
 	        cards.add(linePanel, linePanelT);
 	        cards.add(barPanel, barPanelT);
 	        
+	        //Voeg objecten toe aan de cards
+	        circlePanel.add(pieChart);
+			linePanel.add(lineText);
+			barPanel.add(barText);
+	        
 	        //Zet alles in het midden
 	        checkBoxText.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        cards.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        pieChart.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        
 	        //Combobox width aanpassen
 	        comboBox.setMaximumSize(new Dimension(200, comboBox.getPreferredSize().height));
@@ -137,12 +202,24 @@ public class StatsWindow extends JFrame {
 			this.add(cards);
 		}
 		
-		//Maak class vor event aan
+
+		public void updateTotalCars(int autos , int parkedC, int passA, int resA){
+			pieview.giveStats(autos, parkedC, passA, resA);
+		}
+		
+		//Maak class voor event aan
 		private class cardEvents implements ItemListener  {
 			public void itemStateChanged(ItemEvent evt) {
 		        CardLayout cl = (CardLayout)(cards.getLayout());
 		        cl.show(cards, (String)evt.getItem());
 		    }
 		}
+	
+		public void paintComponent(Graphics g) {
+			g.setColor(Color.BLUE);
+			g.fillRect(230, 50, 10, 10);
+		}
+	
+	
 	}
 }

@@ -8,6 +8,7 @@ import Car.ParkingPassCar;
 import Car.ReserveCar;
 import Car.ReserveSpot;
 import Controller.Location;
+import View.PieView;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -69,8 +70,11 @@ public class SimulatorView extends JFrame {
    //Geef stats door aan statswindow
    public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
 	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC);
+	   
    }
 
+
+   
    public int getNumberOfPaidOpenSpots(){
 	   	return numberOfPaidOpenSpots;
    }
