@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SimulatorView extends JFrame {
-    private CarParkView carParkView;
+	private CarParkView carParkView;
     private ToolsView toolsView;
     private int numberOfFloors;
     private int numberOfRows;
@@ -76,6 +76,7 @@ public class SimulatorView extends JFrame {
    //Geef tijd door aan carParkView
    public void giveTime(int m, int h, int d) {
 	   carParkView.updateTime(m,h,d); //Verstuur de tijd naar carParkView
+	   toolsView.statsWindow.giveHour(h); //Verstuur alleen het uur
    }
    
    //Geef stats door aan statswindow

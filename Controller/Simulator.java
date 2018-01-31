@@ -33,6 +33,7 @@ public class Simulator {
     
     private boolean isPaused;
     private boolean isSkipped;
+    private boolean timeAdvanced;
     
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
@@ -112,6 +113,7 @@ public class Simulator {
         while (minute > 59) {
             minute -= 60;
             hour++;
+            
         }
         while (hour > 23) {
             hour -= 24;
