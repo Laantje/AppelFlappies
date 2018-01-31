@@ -25,7 +25,7 @@ public class Simulator {
     private SimulatorView simulatorView;
 
     private int day = 0; //Maandag = 0; Dinsdag = 1; Woensdag = 2; enzovoort...
-    private int hour = 0;
+    private int hour = 6;
     private int minute = 0;
     
     private int totalParkedCars = 0;
@@ -120,6 +120,8 @@ public class Simulator {
         	sendStats();
     	}
     }
+    
+
 
     private void advanceTime(){
         // Advance the time by one minute.

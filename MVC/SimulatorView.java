@@ -8,6 +8,7 @@ import Car.ParkingPassCar;
 import Car.ReserveCar;
 import Car.ReserveSpot;
 import Controller.Location;
+import View.PieView;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -106,6 +107,8 @@ public class SimulatorView extends JFrame {
 	   toolsView.statsWindow.giveCarQueues(normalA, passA, reservationA, payA, exitA);
    }
 
+
+   
    public int getNumberOfPaidOpenSpots(){
 	   	return numberOfPaidOpenSpots;
    }

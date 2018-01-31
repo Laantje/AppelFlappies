@@ -1,9 +1,12 @@
 package MVC;
 
+
 import javax.swing.*;
 
 import javafx.scene.layout.Pane;
 
+
+import View.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
@@ -22,11 +25,14 @@ public class StatsWindow extends JFrame {
 		//Maak JPanels aan
 		statsTextView = new StatsTextView();
 		statsGraphView = new StatsGraphView();
-
+		
+		
+		 
 		//Voeg JPanels toe aan contentpane
 	    Container contentPane = getContentPane();
 	    contentPane.add(statsTextView, BorderLayout.NORTH);
-	    contentPane.add(statsGraphView, BorderLayout.SOUTH);
+	    contentPane.add(statsGraphView, BorderLayout.CENTER);
+	    //contentPane.add(pieChart, BorderLayout.CENTER);
 	    pack();
 	}
 	
@@ -45,6 +51,7 @@ public class StatsWindow extends JFrame {
 		statsTextView.updateQueues(normalA, passA, reservationA, payA, exitA);
 	}
 	
+
 	private class StatsTextView extends JPanel {
     private static final long serialVersionUID = 1L;
 		//Titel
@@ -173,13 +180,14 @@ public class StatsWindow extends JFrame {
 			moneyTotalAmount.setText(String.valueOf(totalCash));
 		}
 	}
-	
+
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private BarGraphView barGraphView;
 		private LineGraphView lineGraphView;
 		private JPanel cards;
+
 		private JLabel checkBoxText;
 		private JLabel circleText;
 		private JLabel lineText;
@@ -187,8 +195,16 @@ public class StatsWindow extends JFrame {
 		private final static String circlePanelT = "Cirkel Diagram";
 		private final static String linePanelT = "Lijn Diagram";
 		private final static String barPanelT = "Staaf Diagram";
+		private PieView pieview;
+		private Model model;
+		private JPanel pieChart;
+		private JButton testAantal;
+		private int totalCars;
+		private JLabel legendaTextN;
+		private JLabel legendaTextA;
+		private JLabel legendaTextG;
 		private boolean isCreated = false;
-		
+
 		public StatsGraphView() {
 			//Init borderlayout
 			this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -208,8 +224,8 @@ public class StatsWindow extends JFrame {
 			//Maak Jlabel aan
 	        checkBoxText = new JLabel("Kies soort diagram:");
 	        circleText = new JLabel("Hier komt een cirkel diagram");
-	        
-	        //Create graphs
+      
+      //Create graphs
 			barGraphView = new BarGraphView();
 	        lineGraphView = new LineGraphView();
 	        
@@ -217,16 +233,55 @@ public class StatsWindow extends JFrame {
 			circlePanel.add(circleText);
 			linePanel.add(lineGraphView);
 			barPanel.add(barGraphView);
+	        
+			//Zet de layouts van de panels
+			circlePanel.setLayout(new BoxLayout(circlePanel, BoxLayout.PAGE_AXIS));
+			
+			//maak een pie chart aan.
+			pieChart = new JPanel();
+			pieChart.setLayout(null);
+			pieChart.setSize(200,200);
+			model = new Model(); 
+			model.setAantal(0);
+			pieview = new PieView(model);
+			pieview.setBounds(0, 0, 250, 200);
+			pieview.setBackground(Color.BLACK);
+			pieChart.add(pieview);
+			pieChart.setBackground(new Color(238,238,238));
+			pieChart.setVisible(true);
+			
+			//Maak pie chart legenda aan.
+			legendaTextN = new JLabel("Normale autos");
+			legendaTextN.setLayout(null);
+			legendaTextN.setBounds(250,50, 100, 50);
+			pieChart.add(legendaTextN);
+			
+			legendaTextA = new JLabel("Abbonementen");
+			legendaTextA.setLayout(null);
+			legendaTextA.setBounds(250,50, 100, 80);
+			pieChart.add(legendaTextA);
+			
+			legendaTextG = new JLabel("Reserveringen");
+			legendaTextG.setLayout(null);
+			legendaTextG.setBounds(250,50, 100, 110);
+			pieChart.add(legendaTextG);
 			
 			//Voeg de cards toe aan cards
 			cards.add(circlePanel, circlePanelT);
 	        cards.add(linePanel, linePanelT);
 	        cards.add(barPanel, barPanelT);
 	        
+	        //Voeg objecten toe aan de cards
+	        circlePanel.add(pieChart);
+
+			linePanel.add(lineText);
+			barPanel.add(barText);
+	        
 	        //Zet alles in het midden
 	        checkBoxText.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        cards.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        pieChart.setAlignmentX(Component.CENTER_ALIGNMENT);
 	        
 	        //Combobox width aanpassen
 	        comboBox.setMaximumSize(new Dimension(200, comboBox.getPreferredSize().height));
@@ -235,6 +290,10 @@ public class StatsWindow extends JFrame {
 			this.add(checkBoxText);
 			this.add(comboBox);
 			this.add(cards);
+		}
+
+		public void updateTotalCars(int autos , int parkedC, int passA, int resA){
+			pieview.giveStats(autos, parkedC, passA, resA);
 		}
 		
 		//Laat actuele stats zien
@@ -258,5 +317,8 @@ public class StatsWindow extends JFrame {
 		        cl.show(cards, (String)evt.getItem());
 		    }
 		}
+	
+	
 	}
+
 }
