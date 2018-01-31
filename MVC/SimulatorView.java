@@ -73,6 +73,10 @@ public class SimulatorView extends JFrame {
    public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC, int totalCash, int expectedCash) {
 	   carParkView.statsWindow.giveStats(totalC, parkedC, parkedPC, parkedRC, totalCash, expectedCash);
    }
+   //Geef values door aan adminwindow
+   public void giveStartValues(int enterSpeedStart, int enterSpeed, int paymentSpeedStart, int paymentSpeed, int exitSpeedStart, int exitSpeed, int reserveSpeedStart, int reserveSpeed) {
+	   carParkView.adminWindow.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
+   }
    
    //Haal update op
    public HashMap<String, Integer> getUpdateValues() {
@@ -180,7 +184,6 @@ public class SimulatorView extends JFrame {
     	   return null;
        }else {
     	   int rand = new Random().nextInt(i);
-    	   System.out.print(rand);
     	   return array.get(rand);
        }
    }

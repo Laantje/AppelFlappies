@@ -29,6 +29,10 @@ public class AdminWindow extends JFrame {
 	    pack();
 	}
 	
+	public void giveStartValues(int enterSpeedStart, int enterSpeed, int paymentSpeedStart, int paymentSpeed, int exitSpeedStart, int exitSpeed, int reserveSpeedStart, int reserveSpeed) {
+		   adminView.startValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
+	   }
+	
 	public HashMap<String, Integer> getUpdateValues() {
 		return adminView.getUpdateValues();
 	}
@@ -40,8 +44,6 @@ public class AdminWindow extends JFrame {
 	private class AdminView extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
-		private JLabel titel;
-		
 		private JLabel enterSpeed;
 		private JTextField enterSpeedField;
 		private JLabel paymentSpeed;
@@ -50,26 +52,37 @@ public class AdminWindow extends JFrame {
 	    private JTextField exitSpeedField;
 	    
 	    private JButton submitButton;
-	    private JButton resetButton;
+	    private JButton resetButton;    
+	    
+        int enterSpeedStart;
+		int paymentSpeedStart;
+		int exitSpeedStart;
 
 		protected boolean updateNeeded = false;
 		HashMap<String, Integer>  map = new HashMap<>();
 
 		public AdminView() {
 			//Maak een gridlayout van deze JPanel
-			this.setLayout(new GridLayout(0, 2));
+			this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+			
+			//Maak meerdere Jpanels
+	        JPanel buttons = new JPanel();
+	        buttons.setLayout(new FlowLayout());
+	        
+	        JPanel speed = new JPanel();
+	        speed.setLayout(new GridLayout(0,2));
 			
 			//Maak border
 			Border empty = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 	        Border blackLine = BorderFactory.createLineBorder(Color.black);
 	        CompoundBorder line = new CompoundBorder(empty, blackLine);
 	        Border grid1Border = BorderFactory.createTitledBorder(line, "Admin Tools");
+	        Border speedBorder = BorderFactory.createTitledBorder(line, "Snelheid aanpassen");
 	        
-	        this.setBorder(grid1Border);
+	        this.setBorder(grid1Border); 
+	        speed.setBorder(speedBorder);
 	        
 			//Maak JLabel aan
-			titel = new JLabel("0");
-			
 	        enterSpeed = new JLabel("0");
 	        enterSpeedField = new JTextField("0");
 	        paymentSpeed = new JLabel("0");
@@ -81,7 +94,6 @@ public class AdminWindow extends JFrame {
 	        resetButton = new JButton("Reset");
 	           
 	        //Maak de font groter
-	        titel.setFont(new Font("", Font.PLAIN, 30));
 
 	        enterSpeed.setFont(new Font("", Font.PLAIN, 18));
 	        enterSpeedField.setFont(new Font("", Font.PLAIN, 18));
@@ -91,27 +103,25 @@ public class AdminWindow extends JFrame {
 	        exitSpeedField.setFont(new Font("", Font.PLAIN, 18));
 	        
 	        //Voeg JLabel/JTextField toe
-	        this.add(enterSpeed);
-	        this.add(enterSpeed);
-	        this.add(enterSpeedField);
-	        this.add(paymentSpeed);
-	        this.add(paymentSpeedField);
-	        this.add(exitSpeed);
-	        this.add(exitSpeedField);   
+	        speed.add(enterSpeed);
+	        speed.add(enterSpeedField);
+	        speed.add(paymentSpeed);
+	        speed.add(paymentSpeedField);
+	        speed.add(exitSpeed);
+	        speed.add(exitSpeedField);   
 	        
 	        //Voeg JButtons toe
-	        this.add(submitButton);
-	        this.add(resetButton);
+	        buttons.add(submitButton);
+	        buttons.add(resetButton);
+	        
+	        //Toon Jpanels
+	        add(speed);
+	        add(buttons);
 	        
 	        //Geef labels inhoud
 	        enterSpeed.setText("Enter Speed: ");
 	        paymentSpeed.setText("Payment Speed: ");
 	        exitSpeed.setText("Exit Speed: ");
-	        
-	        //Hashmap initialiseren
-	        map.put("enterSpeed", 7);
-	        map.put("paymentSpeed", 5);
-			map.put("exitSpeed", 3);
 	        
 	        //Geef de submit button een event
 	           submitButton.addActionListener( new ActionListener()
@@ -128,10 +138,11 @@ public class AdminWindow extends JFrame {
 	               public void actionPerformed(ActionEvent e)
 	               {
 	                   resetStats();
-	                   System.out.println(map.get("exitSpeed"));
+	                   
 	               }
 	           });
-	        
+	           
+	           
 		}
 		
 		public void updateValues() {
@@ -144,6 +155,13 @@ public class AdminWindow extends JFrame {
 			map.put("exitSpeed", exitSpeedValue);
 		}
 		
+		public void startValues(int enterSpeedStart, int enterSpeed, int paymentSpeedStart, int paymentSpeed, int exitSpeedStart, int exitSpeed, int reserveSpeedStart, int reserveSpeed) {
+			this.enterSpeedStart = enterSpeedStart;
+			this.paymentSpeedStart = paymentSpeedStart;
+			this.exitSpeedStart = exitSpeedStart;
+			resetStats();
+		}
+		
 		public HashMap<String, Integer> getUpdateValues() {
 			return map;
 		}
@@ -152,12 +170,16 @@ public class AdminWindow extends JFrame {
 			return updateNeeded;
 		}
 		
-		public void resetStats() {
-			//Zet string om in Int
-			map.put("enterSpeed", 7);
-			map.put("paymentSpeed", 5);
-			map.put("exitSpeed", 3);
+		public void resetStats() {			
+			map.put("enterSpeed", enterSpeedStart);
+			map.put("paymentSpeed", paymentSpeedStart);
+			map.put("exitSpeed", exitSpeedStart);
+			enterSpeedField.setText(Integer.toString(enterSpeedStart));
+			paymentSpeedField.setText(Integer.toString(paymentSpeedStart));
+			exitSpeedField.setText(Integer.toString(exitSpeedStart));
 		}
+		
+		
 
 	}
 }

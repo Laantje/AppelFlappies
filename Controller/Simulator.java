@@ -51,6 +51,11 @@ public class Simulator {
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
     int reserveSpeed = 10; // number of reservations that can be made per minute
+    
+    int enterSpeedStart = enterSpeed; // start value of number of cars that can enter per minute
+    int paymentSpeedStart = paymentSpeed; // start value of number of cars that can pay per minute
+    int exitSpeedStart = exitSpeed; // start value of number of cars that can leave per minute
+    int reserveSpeedStart = reserveSpeed; // start value of number of reservations that can be made per minute
 
     public Simulator() {
         entranceCarQueue = new CarQueue();
@@ -63,9 +68,11 @@ public class Simulator {
     }
 
     public void run() {
-        for (int i = 0; i < 10000; i++) {
+    	startValue();
+        for (int i = 0; i < 1000000; i++) {
             tick();
         }
+        
     }
 
     private void tick() {
@@ -81,10 +88,7 @@ public class Simulator {
             e.printStackTrace();
         }
     	handleEntrance();
-    	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
-    	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
-    	//Geef stats door aan SimulatorView
-    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars, moneyTotal, moneyExpected);
+    	sendStats();
     }
 
     private void advanceTime(){
@@ -102,6 +106,17 @@ public class Simulator {
             day -= 7;
         }
         simulatorView.giveTime(minute, hour, day); //Verstuur de tijd naar carParkView
+    }
+    
+    private void sendStats() {
+    	//Tel de geparkeerde auto's bij elkaar op tot een totaal geheel
+    	totalParkedCars = parkedCars + parkedPassCars + parkedReservedCars;
+    	//Geef stats door aan SimulatorView
+    	simulatorView.giveStats(totalParkedCars, parkedCars, parkedPassCars, parkedReservedCars, moneyTotal, moneyExpected);    	
+    }
+    
+    public void startValue() {
+    	simulatorView.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
     }
     
     //Kijk of de main window nog open staat, zoja terminate program
