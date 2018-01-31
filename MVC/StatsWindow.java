@@ -189,21 +189,15 @@ public class StatsWindow extends JFrame {
 		private JPanel cards;
 
 		private JLabel checkBoxText;
-		private JLabel circleText;
-		private JLabel lineText;
-		private JLabel barText;
 		private final static String circlePanelT = "Cirkel Diagram";
 		private final static String linePanelT = "Lijn Diagram";
 		private final static String barPanelT = "Staaf Diagram";
 		private PieView pieview;
 		private Model model;
 		private JPanel pieChart;
-		private JButton testAantal;
-		private int totalCars;
 		private JLabel legendaTextN;
 		private JLabel legendaTextA;
 		private JLabel legendaTextG;
-		private boolean isCreated = false;
 
 		public StatsGraphView() {
 			//Init borderlayout
@@ -223,14 +217,12 @@ public class StatsWindow extends JFrame {
 	        
 			//Maak Jlabel aan
 	        checkBoxText = new JLabel("Kies soort diagram:");
-	        circleText = new JLabel("Hier komt een cirkel diagram");
       
-      //Create graphs
+	        //Create graphs
 			barGraphView = new BarGraphView();
 	        lineGraphView = new LineGraphView();
 	        
 			//Voeg objecten toe aan de cards
-			circlePanel.add(circleText);
 			linePanel.add(lineGraphView);
 			barPanel.add(barGraphView);
 	        
@@ -273,9 +265,6 @@ public class StatsWindow extends JFrame {
 	        
 	        //Voeg objecten toe aan de cards
 	        circlePanel.add(pieChart);
-
-			linePanel.add(lineText);
-			barPanel.add(barText);
 	        
 	        //Zet alles in het midden
 	        checkBoxText.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -291,14 +280,11 @@ public class StatsWindow extends JFrame {
 			this.add(comboBox);
 			this.add(cards);
 		}
-
-		public void updateTotalCars(int autos , int parkedC, int passA, int resA){
-			pieview.giveStats(autos, parkedC, passA, resA);
-		}
 		
 		//Laat actuele stats zien
 		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
 			if(this.isVisible()) {
+				pieview.giveStats(totalC, parkedC, parkedPC, parkedRC);
 				lineGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
 				barGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
 			}

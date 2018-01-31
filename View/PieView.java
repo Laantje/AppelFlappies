@@ -21,10 +21,6 @@ public class PieView extends AbstractView {
 			float floatC; 
 			floatC = totalC;
 			
-			//System.out.println("floatC: " + floatC);
-			//System.out.println("totalC: " + totalC);
-			
-			
 			if(totalC == 0){ 
 				tempTotalC = 1;
 			}
@@ -35,8 +31,6 @@ public class PieView extends AbstractView {
 			this.parkedC = ((float)parkedC * 100 / (float)tempTotalC * 3.6f);
 			this.parkedPC = ((float)parkedPC * 100 / (float)tempTotalC * 3.6f);
 			this.parkedRC = ((float)parkedRC * 100 / (float)tempTotalC * 3.6f);
-			//this.parkedRC = 1.8;
-			
 			
 			if((int)this.parkedC + (int)this.parkedPC + (int)this.parkedRC == 358) {
 				this.parkedC += 2;
