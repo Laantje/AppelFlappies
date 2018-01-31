@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class StatsWindow extends JFrame {
 	private StatsTextView statsTextView;
@@ -16,7 +17,7 @@ public class StatsWindow extends JFrame {
 	
 	public StatsWindow() {
 		//Create Dimension
-		this.setPreferredSize(new Dimension(700, 350));
+		this.setPreferredSize(new Dimension(700, 700));
 		
 		//Maak JPanels aan
 		statsTextView = new StatsTextView();
@@ -31,7 +32,12 @@ public class StatsWindow extends JFrame {
 	
 	//Geef stats door aan statsView
 	public void giveStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
-		   statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+		statsTextView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+		statsGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+	}
+	
+	public void giveHour(int h) {
+		statsGraphView.updateHour(h);
 	}
 	
 	//Geef stats van de queues door
@@ -151,6 +157,8 @@ public class StatsWindow extends JFrame {
 	
 	//Class voor het laten zien van verschillende grafieken
 	private class StatsGraphView extends JPanel {
+		private BarGraphView barGraphView;
+		private LineGraphView lineGraphView;
 		private JPanel cards;
 		private JLabel checkBoxText;
 		private JLabel circleText;
@@ -159,6 +167,7 @@ public class StatsWindow extends JFrame {
 		private final static String circlePanelT = "Cirkel Diagram";
 		private final static String linePanelT = "Lijn Diagram";
 		private final static String barPanelT = "Staaf Diagram";
+		private boolean isCreated = false;
 		
 		public StatsGraphView() {
 			//Init borderlayout
@@ -166,6 +175,9 @@ public class StatsWindow extends JFrame {
 			
 			//Initializeer JPanel
 			cards = new JPanel(new CardLayout());
+			JPanel circlePanel = new JPanel();
+			JPanel linePanel = new JPanel();
+			JPanel barPanel = new JPanel();
 			
 			//Maak nieuwe combobox aan
 			String comboBoxItems[] = { circlePanelT, linePanelT, barPanelT };
@@ -176,18 +188,15 @@ public class StatsWindow extends JFrame {
 			//Maak Jlabel aan
 	        checkBoxText = new JLabel("Kies soort diagram:");
 	        circleText = new JLabel("Hier komt een cirkel diagram");
-	        lineText = new JLabel("Hier komt een lijn diagram");
-	        barText = new JLabel("Hier komt een staaf diagram");
 	        
-	        //Maak keuze jpanels aan
-	        JPanel circlePanel = new JPanel();
-			JPanel linePanel = new JPanel();
-			JPanel barPanel = new JPanel();
-			
+	        //Create graphs
+			barGraphView = new BarGraphView();
+	        lineGraphView = new LineGraphView();
+	        
 			//Voeg objecten toe aan de cards
 			circlePanel.add(circleText);
-			linePanel.add(lineText);
-			barPanel.add(barText);
+			linePanel.add(lineGraphView);
+			barPanel.add(barGraphView);
 			
 			//Voeg de cards toe aan cards
 			cards.add(circlePanel, circlePanelT);
@@ -206,6 +215,20 @@ public class StatsWindow extends JFrame {
 			this.add(checkBoxText);
 			this.add(comboBox);
 			this.add(cards);
+		}
+		
+		//Laat actuele stats zien
+		public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
+			if(this.isVisible()) {
+				lineGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+				barGraphView.updateStats(totalC, parkedC, parkedPC, parkedRC);
+			}
+		}
+		
+		public void updateHour(int h) {
+			if(this.isVisible()) {
+				lineGraphView.updateHour(h);
+			}
 		}
 		
 		//Maak class vor event aan
