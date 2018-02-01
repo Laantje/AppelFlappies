@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Random;
 
 import Car.*;
-import MVC.SimulatorView;
+import Location.Location;
+import Queue.CarQueue;
+import View.SimulatorView;
 
 public class Simulator {
 

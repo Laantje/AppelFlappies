@@ -1,4 +1,4 @@
-package MVC;
+package View;
 
 import java.awt.Dimension;
 
@@ -13,6 +13,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 public class LineGraphView extends JPanel {
+	private static final long serialVersionUID = 1L;
 	private ChartPanel chartPanel;
 	private JFreeChart chart;
 	private XYDataset dataset;
@@ -29,7 +30,6 @@ public class LineGraphView extends JPanel {
 	private int tempParkedPC = 0;
 	private int tempParkedRC = 0;
 	private int hour = 0;
-	private boolean isCreated;
 	
 	public LineGraphView() {
 		tempTotalC = totalC;
@@ -49,8 +49,6 @@ public class LineGraphView extends JPanel {
         chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(550,350));
         this.add(chartPanel);
-        
-        isCreated = false;
 	}
 	
 	//Laat actuele stats zien

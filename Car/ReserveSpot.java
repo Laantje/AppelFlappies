@@ -1,6 +1,5 @@
 package Car;
 
-import java.util.Random;
 import java.awt.*;
 
 public class ReserveSpot extends Car {

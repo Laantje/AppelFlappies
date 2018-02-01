@@ -1,6 +1,4 @@
-package Controller;
- 
-import java.awt.Color;
+package Location;
 
 public class Location {
 

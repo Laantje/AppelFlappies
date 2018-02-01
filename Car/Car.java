@@ -3,7 +3,7 @@ package Car;
 
 import java.awt.*;
 
-import Controller.Location;
+import Location.Location;
 
 public abstract class Car {
 

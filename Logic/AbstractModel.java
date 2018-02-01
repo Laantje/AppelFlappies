@@ -1,6 +1,8 @@
-package View;
+package Logic;
 
 import java.util.*;
+
+import View.AbstractView;
 
 
 public abstract class AbstractModel {

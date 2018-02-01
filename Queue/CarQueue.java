@@ -1,11 +1,12 @@
-package Car;
+package Queue;
  
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
 
+import Car.Car;
+
 public class CarQueue {
-    private LinkedList<Car> queue = new LinkedList();
+    private LinkedList<Car> queue = new LinkedList<Car>();
 
     public boolean addCar(Car car) {
         return queue.add(car);

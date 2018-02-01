@@ -1,6 +1,4 @@
-package View;
-
-
+package Logic;
 
 public class Model extends AbstractModel implements Runnable {
 	private int aantal;

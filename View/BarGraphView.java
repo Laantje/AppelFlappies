@@ -1,4 +1,4 @@
-package MVC;
+package View;
 
 import java.awt.Dimension;
 
@@ -8,19 +8,12 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.DatasetUtilities;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeriesCollection;
 
 public class BarGraphView extends JPanel {
+	private static final long serialVersionUID = 1L;
 	private ChartPanel chartPanel;
 	private JFreeChart chart;
-	private int totalC = 0;
-	private int parkedC = 0;
-	private int parkedPC = 0;
-	private int parkedRC = 0;
 	private DefaultCategoryDataset dataset;
 
 	public BarGraphView() {
@@ -34,12 +27,7 @@ public class BarGraphView extends JPanel {
 	}
 	
 	//Laat actuele stats zien
-	public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC) {
-		this.totalC = totalC;
-		this.parkedC = parkedC;
-		this.parkedPC = parkedPC;
-		this.parkedRC = parkedRC;
-		
+	public void updateStats(int totalC, int parkedC, int parkedPC, int parkedRC) {		
 	    dataset.addValue( totalC, "Totaal", "Soorten Klanten");
 	    dataset.addValue( parkedC, "Regulier", "Soorten Klanten");
 	    dataset.addValue( parkedPC, "Abonnement", "Soorten Klanten");

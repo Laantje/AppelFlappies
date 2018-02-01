@@ -1,17 +1,12 @@
-package MVC;
-
+package Window;
 
 import javax.swing.*;
 
-import javafx.scene.layout.Pane;
-
+import Logic.Model;
 
 import View.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class StatsWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -211,7 +206,7 @@ public class StatsWindow extends JFrame {
 			
 			//Maak nieuwe combobox aan
 			String comboBoxItems[] = { circlePanelT, linePanelT, barPanelT };
-	        JComboBox comboBox = new JComboBox(comboBoxItems);
+	        JComboBox<String> comboBox = new JComboBox<String>(comboBoxItems);
 	        comboBox.setEditable(false);
 	        comboBox.addItemListener(new cardEvents());
 	        

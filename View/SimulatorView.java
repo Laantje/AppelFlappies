@@ -1,4 +1,4 @@
-package MVC;
+package View;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -8,22 +8,21 @@ import Car.Car;
 import Car.ParkingPassCar;
 import Car.ReserveCar;
 import Car.ReserveSpot;
-import Controller.Location;
-import View.PieView;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
+import Location.Location;
+import Window.AdminWindow;
+import Window.StatsWindow;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 public class SimulatorView extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private CarParkView carParkView;
     private ToolsView toolsView;
     private CreditsView creditsView;
@@ -85,6 +84,11 @@ public class SimulatorView extends JFrame {
    public int getNumberOfOpenSpots(){
    		return numberOfOpenSpots;
    }
+   
+   //Geef dimensies door aan ToolsView
+   public void giveDimensions() {
+	   toolsView.updateDimensions(this.getX(), this.getWidth(), this.getY());
+   }
 
    //Geef tijd door aan carParkView
    public void giveTime(int m, int h, int d) {
@@ -115,8 +119,6 @@ public class SimulatorView extends JFrame {
    public void giveQueues(int normalA, int passA, int reservationA, int payA, int exitA) {
 	   toolsView.statsWindow.giveCarQueues(normalA, passA, reservationA, payA, exitA);
    }
-
-
    
    public int getNumberOfPaidOpenSpots(){
 	   	return numberOfPaidOpenSpots;
@@ -248,7 +250,11 @@ public class SimulatorView extends JFrame {
    }
 
    public void tick() {
-	   System.out.println("");
+	   //Als dimensies veranderen
+	   if(toolsView.getFrameX() != this.getX() || toolsView.getFrameWidth() != this.getWidth() || toolsView.getFrameY() != this.getY()) {
+		   giveDimensions();
+	   }
+	   
        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
            for (int row = 0; row < getNumberOfRows(); row++) {
                for (int place = 0; place < getNumberOfPlaces(); place++) {
@@ -273,7 +279,8 @@ public class SimulatorView extends JFrame {
    }
    
    private class CarParkView extends JPanel {
-       private Dimension size;
+	   private static final long serialVersionUID = 1L;
+	   private Dimension size;
        private Image carParkImage;
        private JLabel clockDay;
        private JLabel clockTime;
@@ -291,7 +298,7 @@ public class SimulatorView extends JFrame {
            
            //Maak JLabel voor tijd en dag aan
            clockDay = new JLabel("Maandag");
-           clockTime = new JLabel(String.valueOf(hour) + ":" + String.valueOf(minute));
+           clockTime = new JLabel("00:00");
            
            //Maak de font groter
            clockDay.setFont(new Font("", Font.PLAIN, 30));
@@ -434,6 +441,7 @@ public class SimulatorView extends JFrame {
    }
    
    private class ToolsView extends JPanel {
+	   private static final long serialVersionUID = 1L;
 	   private AdminWindow adminWindow;
 	   private StatsWindow statsWindow;
 	   private JLabel toolsText;
@@ -441,6 +449,9 @@ public class SimulatorView extends JFrame {
 	   private JButton skipButton;
 	   private JButton statsButton;
 	   private JButton adminButton;
+	   private int frameX = 0;
+	   private int frameY = 0;
+	   private int frameWidth = 0;
 	   private boolean isPaused;
 	   private boolean isSkipped;
 	   
@@ -514,6 +525,21 @@ public class SimulatorView extends JFrame {
 		  this.add(statsButton);
        }
 	   
+	   //Vraag frameX op
+	   public int getFrameX() {
+		   return frameX;
+	   }
+	   
+	 //Vraag frameWidth op
+	   public int getFrameWidth() {
+		   return frameWidth;
+	   }
+	   
+	 //Vraag frameY op
+	   public int getFrameY() {
+		   return frameY;
+	   }
+	   
 	   //Functie voor het 'get'en van de isPaused boolean
 	   public boolean getPaused() {
 		   return isPaused;
@@ -528,6 +554,13 @@ public class SimulatorView extends JFrame {
 		   else {
 			   return false;
 		   }
+	   }
+	   
+	   //Update dimensies van JFrame
+	   public void updateDimensions(int fX, int fWidth, int fY) {
+		   frameX = fX;
+		   frameWidth = fWidth;
+		   frameY = fY;
 	   }
 	   
 	   //Functie voor het pauzeren van de simulator
@@ -554,6 +587,7 @@ public class SimulatorView extends JFrame {
     		   adminWindow.setVisible(false);
     	   }
     	   else {
+    		   adminWindow.setLocation(frameX + frameWidth, frameY);
     		   adminWindow.setVisible(true);
     	   }
        }
@@ -565,12 +599,14 @@ public class SimulatorView extends JFrame {
     		   statsWindow.setVisible(false);
     	   }
     	   else {
+    		   statsWindow.setLocation(frameX + frameWidth, frameY);
     		   statsWindow.setVisible(true);
     	   }
        }
    }
    
    private class CreditsView extends JPanel {
+	   private static final long serialVersionUID = 1L;
 	   private JPanel creditsPanel;
 	   private JLabel creditsT;
 	   private JLabel namesT;
