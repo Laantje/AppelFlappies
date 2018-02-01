@@ -1,5 +1,6 @@
 package MVC;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import Car.AdHocCar;
@@ -9,10 +10,15 @@ import Car.ReserveCar;
 import Car.ReserveSpot;
 import Controller.Location;
 import View.PieView;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -20,6 +26,7 @@ import java.util.Random;
 public class SimulatorView extends JFrame {
 	private CarParkView carParkView;
     private ToolsView toolsView;
+    private CreditsView creditsView;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
@@ -35,11 +42,13 @@ public class SimulatorView extends JFrame {
        this.numberOfOpenSpots =(numberOfFloors-1)*numberOfRows*numberOfPlaces;
        this.numberOfPaidOpenSpots =1*numberOfRows*numberOfPlaces;
        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
-       
+      
+       creditsView = new CreditsView();
        carParkView = new CarParkView();
        toolsView = new ToolsView();
 
        Container contentPane = getContentPane();
+       contentPane.add(creditsView, BorderLayout.NORTH);
        contentPane.add(carParkView, BorderLayout.CENTER);
        contentPane.add(toolsView, BorderLayout.SOUTH);
        pack();
@@ -559,5 +568,50 @@ public class SimulatorView extends JFrame {
     		   statsWindow.setVisible(true);
     	   }
        }
+   }
+   
+   private class CreditsView extends JPanel {
+	   private JPanel creditsPanel;
+	   private JLabel creditsT;
+	   private JLabel namesT;
+	   
+	   public CreditsView() {
+		   //Zet de layout van creditsview
+		   this.setLayout(new GridLayout(0,2));
+		   
+		   //Laat de hanze logo zien
+		   try {
+			   BufferedImage myPicture = ImageIO.read(new File("resources\\image\\hanzelogo.png"));
+			   JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+			   picLabel.setPreferredSize(new Dimension(300,81));
+			   this.add(picLabel);
+		    } catch (Exception e) {
+		        JOptionPane.showMessageDialog(null, e);
+		        System.out.print("file not found");
+		    } 
+		   
+		   //Configureer JPanel
+		   creditsPanel = new JPanel();
+		   creditsPanel.setLayout(new BoxLayout(creditsPanel, BoxLayout.PAGE_AXIS));
+		   
+		   //Maak JLabel
+		   creditsT = new JLabel("Gemaakt door:", SwingConstants.CENTER);
+		   namesT = new JLabel("Sebastiaan, David, Tjesse & Sander", SwingConstants.CENTER);
+		   
+		   //Zet de font size
+		   creditsT.setFont(new Font("", Font.PLAIN, 20));
+		   namesT.setFont(new Font("", Font.PLAIN, 20));
+		   
+		   //Zet de JLabel in het midden
+		   creditsT.setAlignmentX(Component.CENTER_ALIGNMENT);
+		   namesT.setAlignmentX(Component.CENTER_ALIGNMENT);
+		   
+		   //Voeg JLabels toe
+		   creditsPanel.add(creditsT);
+		   creditsPanel.add(namesT);
+		   
+		   //Voeg JPanel toe
+		   this.add(creditsPanel);
+	   }
    }
 }

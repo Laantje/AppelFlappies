@@ -2,7 +2,6 @@ package Controller;
 
 import javax.swing.*;
 import sun.audio.*;
-import java.awt.event.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Random;
@@ -195,7 +194,7 @@ public class Simulator {
 	public static void music(){		
 		InputStream in;
 	    try {
-	        in = new FileInputStream(new File("C:\\Users\\HVV\\Downloads\\Sound\\background.wav"));
+	        in = new FileInputStream(new File("Resources\\audio\\background.wav"));
 	        AudioStream song = new AudioStream(in);
 	        AudioPlayer.player.start(song);
 	    } catch (Exception e) {
