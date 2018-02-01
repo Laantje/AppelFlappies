@@ -243,7 +243,7 @@ public class StatsWindow extends JFrame {
 			legendaTextN.setBounds(250,50, 100, 50);
 			pieChart.add(legendaTextN);
 			
-			legendaTextA = new JLabel("Abbonementen");
+			legendaTextA = new JLabel("Abonnementen");
 			legendaTextA.setLayout(null);
 			legendaTextA.setBounds(250,50, 100, 80);
 			pieChart.add(legendaTextA);

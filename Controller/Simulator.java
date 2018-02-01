@@ -1,8 +1,10 @@
 package Controller;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
-import sun.audio.*;
-import java.io.*;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -189,12 +191,12 @@ public class Simulator {
     	this.weekDayPassArrivals = weekDayPassArrivals;
     }
    
-    public void updateWeekDayReserves(int weekDayReservesStart) {
-    	this.weekDayReservesStart = weekDayReservesStart;
+    public void updateWeekDayReserves(int weekDayReserves) {
+    	this.weekDayReserves = weekDayReserves;
     }
     	     
-    public void updateWeekDayReservesArrivals(int weekDayReservesArrivalsStart) {
-    	this.weekDayReservesArrivalsStart = weekDayReservesArrivalsStart;
+    public void updateWeekDayReservesArrivals(int weekDayReservesArrivals) {
+    	this.weekDayReservesArrivals = weekDayReservesArrivals;
     }
 
     private void handleEntrance(){
@@ -217,16 +219,17 @@ public class Simulator {
         simulatorView.updateView();	
     }
 
-	public static void music(){		
-		InputStream in;
-	    try {
-	        in = new FileInputStream(new File("Resources\\audio\\background.wav"));
-	        AudioStream song = new AudioStream(in);
-	        AudioPlayer.player.start(song);
-	    } catch (Exception e) {
-	        JOptionPane.showMessageDialog(null, e);
-	        System.out.print("file not found");
-	    } 
+	public void music(){		
+		try {
+			URL defaultMusic = getClass().getResource("/Resources/audio/background.wav");
+		     AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(defaultMusic);
+		     Clip clip = AudioSystem.getClip();
+		     clip.open(audioInputStream);
+		     clip.start( );
+	      } catch (Exception e) {
+		        JOptionPane.showMessageDialog(null, e);
+		        System.out.print("file not found");
+		  } 
 	}
   
     //Kijk wat de status is van de simulator
@@ -522,6 +525,7 @@ public class Simulator {
     
     private void carsImpatient() {
     	entranceCarQueue.removeImpatient();
+    	entrancePassQueue.removeImpatient();
     }
     
     public int getMinute() {

@@ -9,9 +9,13 @@ public class PieView extends AbstractView {
 	private float parkedC;
 	private float parkedPC;
 	private float parkedRC;
+	private Color purple;
 
 	public PieView(Model model) {
 		super(model);
+		
+		purple = new Color(106, 60, 137);
+		
 		setSize(250, 200);
 	}
 	
@@ -52,13 +56,13 @@ public class PieView extends AbstractView {
 		
 		g.setColor(new Color(238,238,238));
 		g.fillRect(0, 0, 200, 200);
-		g.setColor(Color.BLUE);
+		g.setColor(Color.RED);
 		g.fillArc(10, 10, 180, 180, 0, (int)this.parkedC + 1);
 		g.fillRect(230, 70, 10, 10);
-		g.setColor(Color.RED);
+		g.setColor(Color.BLUE);
 		g.fillArc(10, 10, 180, 180, (int)this.parkedC, (int)this.parkedPC);
 		g.fillRect(230, 85, 10, 10);
-		g.setColor(Color.GREEN);
+		g.setColor(purple);
 		g.fillArc(10, 10, 180, 180, (int)this.parkedPC + (int)parkedC, (int)parkedRC);
 		g.fillRect(230, 100, 10, 10);
 	}

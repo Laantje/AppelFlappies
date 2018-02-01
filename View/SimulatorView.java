@@ -16,7 +16,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -617,7 +616,7 @@ public class SimulatorView extends JFrame {
 		   
 		   //Laat de hanze logo zien
 		   try {
-			   BufferedImage myPicture = ImageIO.read(new File("resources\\image\\hanzelogo.png"));
+			   BufferedImage myPicture = ImageIO.read(getClass().getResource("/Resources/image/hanzelogo.png"));
 			   JLabel picLabel = new JLabel(new ImageIcon(myPicture));
 			   picLabel.setPreferredSize(new Dimension(300,81));
 			   this.add(picLabel);

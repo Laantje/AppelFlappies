@@ -1,5 +1,6 @@
 package View;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
@@ -8,6 +9,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -21,6 +23,7 @@ public class LineGraphView extends JPanel {
     private XYSeries series2;
     private XYSeries series3;
     private XYSeries series4;
+    private Color purple;
 	private int totalC = 0;
 	private int parkedC = 0;
 	private int parkedPC = 0;
@@ -36,6 +39,9 @@ public class LineGraphView extends JPanel {
 		tempParkedC = parkedC;
 		tempParkedPC = parkedPC;
 		tempParkedRC = parkedRC;
+		
+		//Maak color aan
+		purple = new Color(106, 60, 137);
 		
 		//Maak series aan
 		series1 = new XYSeries("Totaal");
@@ -115,8 +121,14 @@ public class LineGraphView extends JPanel {
             true,                     // tooltips
             false                     // urls
         );
+        
+        //Change colors
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.getRenderer().setSeriesPaint(0, Color.GREEN);
+        plot.getRenderer().setSeriesPaint(1, Color.RED);
+        plot.getRenderer().setSeriesPaint(2, Color.BLUE);
+        plot.getRenderer().setSeriesPaint(3, purple);
                 
         return chart;
-        
     }
 }
