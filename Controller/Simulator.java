@@ -24,7 +24,7 @@ public class Simulator {
     private SimulatorView simulatorView;
 
     private int day = 0; //Maandag = 0; Dinsdag = 1; Woensdag = 2; enzovoort...
-    private int hour = 6;
+    private int hour = 0;
     private int minute = 0;
     
     private int totalParkedCars = 0;
@@ -40,14 +40,13 @@ public class Simulator {
     
     private boolean isPaused;
     private boolean isSkipped;
-    private boolean timeAdvanced;
     
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = weekDayArrivals * 2; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = weekDayPassArrivals / 2; // average number of arriving cars per hour
     int weekDayReserves = 20; // average number of reserves per hour
-    int weekendReserves = 30; // average number of reserves per hour
+    int weekendReserves = weekDayReserves * 2; // average number of reserves per hour
     int weekDayReservesArrivals = weekDayReserves; // average number of arriving reserves per hour
     int weekendReservesArrivals = weekendReserves; // average number of arriving reserves per hour
 
@@ -60,6 +59,11 @@ public class Simulator {
     int paymentSpeedStart = paymentSpeed; // start value of number of cars that can pay per minute
     int exitSpeedStart = exitSpeed; // start value of number of cars that can leave per minute
     int reserveSpeedStart = reserveSpeed; // start value of number of reservations that can be made per minute
+    
+    int weekDayArrivalsStart = weekDayArrivals; // start value of average number of arriving cars per hour
+    int weekDayPassArrivalsStart = weekDayPassArrivals; // start value of average number of arriving cars per hour
+    int weekDayReservesStart = weekDayReserves; // start value of average number of reserves per hour
+    int weekDayReservesArrivalsStart = weekDayReservesArrivals * 2; // start value of average number of reserves per hour
 
     public Simulator() {
     	isPaused = false;
@@ -149,7 +153,7 @@ public class Simulator {
     }
     
     public void startValue() {
-    	simulatorView.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
+    	simulatorView.giveStartValues(enterSpeedStart, paymentSpeedStart, exitSpeedStart, reserveSpeedStart, weekDayArrivalsStart, weekDayPassArrivalsStart, weekDayReservesStart, weekDayReservesArrivalsStart);
     }
     
     //Kijk of de main window nog open staat, zoja terminate program
@@ -169,6 +173,26 @@ public class Simulator {
     
     public void updateExitSpeed(int exitSpeed) {
     	this.exitSpeed = exitSpeed;
+    }
+    
+    public void updateReserveSpeed(int reserveSpeed) {
+    	this.reserveSpeed = reserveSpeed;
+    }
+  
+    public void updateWeekDayArrivals(int weekDayArrivals) {
+    	this.weekDayArrivals = weekDayArrivals;
+    }
+    
+    public void updateWeekDayPassArrivals(int weekDayPassArrivals) {
+    	this.weekDayPassArrivals = weekDayPassArrivals;
+    }
+   
+    public void updateWeekDayReserves(int weekDayReservesStart) {
+    	this.weekDayReservesStart = weekDayReservesStart;
+    }
+    	     
+    public void updateWeekDayReservesArrivals(int weekDayReservesArrivalsStart) {
+    	this.weekDayReservesArrivalsStart = weekDayReservesArrivalsStart;
     }
 
     private void handleEntrance(){
@@ -510,10 +534,17 @@ public class Simulator {
     	return day;
     }
     
+    //Huidige waardes updaten met ingevoerde gegevens uit admin tools
     private void giveNewValues() {
     	HashMap<String, Integer>  map = simulatorView.getUpdateValues();
     	updateEnterSpeed(map.get("enterSpeed"));
     	updatePaymentSpeed(map.get("paymentSpeed"));
     	updateExitSpeed(map.get("exitSpeed"));
+    	updateReserveSpeed(map.get("reserveSpeed"));
+    	
+    	updateWeekDayArrivals(map.get("weekDayArrivals"));
+    	updateWeekDayPassArrivals(map.get("weekDayPassArrivals"));
+    	updateWeekDayReserves(map.get("weekDayReserves"));
+    	updateWeekDayReservesArrivals(map.get("weekDayReservesArrivals"));	
 	}
 }

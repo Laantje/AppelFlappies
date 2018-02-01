@@ -93,8 +93,8 @@ public class SimulatorView extends JFrame {
    }
    
    //Geef values door aan adminwindow
-   public void giveStartValues(int enterSpeedStart, int enterSpeed, int paymentSpeedStart, int paymentSpeed, int exitSpeedStart, int exitSpeed, int reserveSpeedStart, int reserveSpeed) {
-	   toolsView.adminWindow.giveStartValues(enterSpeedStart, enterSpeed, paymentSpeedStart, paymentSpeed, exitSpeedStart, exitSpeed, reserveSpeedStart, reserveSpeed);
+   public void giveStartValues(int enterSpeedStart, int paymentSpeedStart, int exitSpeedStart, int reserveSpeedStart, int weekDayArrivalsStart, int weekDayPassArrivalsStart, int weekDayReservesStart, int weekDayReservesArrivalsStart) {
+	   toolsView.adminWindow.giveStartValues(enterSpeedStart, paymentSpeedStart, exitSpeedStart, reserveSpeedStart, weekDayArrivalsStart, weekDayPassArrivalsStart, weekDayReservesStart, weekDayReservesArrivalsStart);
    }
    
    //Haal update op
